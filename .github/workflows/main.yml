@@ -36,7 +36,6 @@ jobs:
       - name: Build
         id: build
         run: ./.ci-build-without-test.sh
-
       - name: PICO Typecheck Test
         if: ${{ steps.build.outcome == 'success' }}
         run: ./gradlew ImmutabilityTypecheckTest
