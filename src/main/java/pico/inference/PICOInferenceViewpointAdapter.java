@@ -1,18 +1,21 @@
 package pico.inference;
 
-import checkers.inference.InferenceMain;
-import checkers.inference.util.InferenceViewpointAdapter;
+import static pico.typecheck.PICOAnnotationMirrorHolder.READONLY;
+
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
-import pico.common.ExtendedViewpointAdapter;
-import pico.common.PICOTypeUtil;
-import static pico.typecheck.PICOAnnotationMirrorHolder.READONLY;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.type.TypeKind;
 
-public class PICOInferenceViewpointAdapter extends InferenceViewpointAdapter implements ExtendedViewpointAdapter {
+import checkers.inference.InferenceMain;
+import checkers.inference.util.InferenceViewpointAdapter;
+import pico.common.ExtendedViewpointAdapter;
+import pico.common.PICOTypeUtil;
+
+public class PICOInferenceViewpointAdapter extends InferenceViewpointAdapter
+        implements ExtendedViewpointAdapter {
 
     public PICOInferenceViewpointAdapter(AnnotatedTypeFactory atypeFactory) {
         super(atypeFactory);
@@ -27,7 +30,8 @@ public class PICOInferenceViewpointAdapter extends InferenceViewpointAdapter imp
     }
 
     @Override
-    protected AnnotatedTypeMirror combineAnnotationWithType(AnnotationMirror receiverAnnotation, AnnotatedTypeMirror declared) {
+    protected AnnotatedTypeMirror combineAnnotationWithType(
+            AnnotationMirror receiverAnnotation, AnnotatedTypeMirror declared) {
         if (PICOTypeUtil.isImplicitlyImmutableType(declared)) {
             return declared;
         }
@@ -42,12 +46,14 @@ public class PICOInferenceViewpointAdapter extends InferenceViewpointAdapter imp
     }
 
     @Override
-    public AnnotatedTypeMirror rawCombineAnnotationWithType(AnnotationMirror anno, AnnotatedTypeMirror type) {
+    public AnnotatedTypeMirror rawCombineAnnotationWithType(
+            AnnotationMirror anno, AnnotatedTypeMirror type) {
         return combineAnnotationWithType(anno, type);
     }
 
     @Override
-    public AnnotationMirror rawCombineAnnotationWithAnnotation(AnnotationMirror anno, AnnotationMirror type) {
+    public AnnotationMirror rawCombineAnnotationWithAnnotation(
+            AnnotationMirror anno, AnnotationMirror type) {
         return rawCombineAnnotationWithAnnotation(anno, type);
     }
 
@@ -55,8 +61,8 @@ public class PICOInferenceViewpointAdapter extends InferenceViewpointAdapter imp
     protected AnnotationMirror extractAnnotationMirror(AnnotatedTypeMirror atm) {
         // since the introduction of vp-is-valid rules, real am may be used?
         AnnotationMirror am = super.extractAnnotationMirror(atm);
-        if (am == null) {  // if failed, try to get real am
-            am =  atm.getAnnotationInHierarchy(READONLY);
+        if (am == null) { // if failed, try to get real am
+            am = atm.getAnnotationInHierarchy(READONLY);
         }
         return am;
     }

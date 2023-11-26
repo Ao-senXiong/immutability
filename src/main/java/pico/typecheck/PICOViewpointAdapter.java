@@ -7,23 +7,22 @@ import static pico.typecheck.PICOAnnotationMirrorHolder.POLY_MUTABLE;
 import static pico.typecheck.PICOAnnotationMirrorHolder.READONLY;
 import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDANT_MUTABLE;
 
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.Element;
-import javax.lang.model.type.TypeKind;
-
 import org.checkerframework.framework.type.AbstractViewpointAdapter;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.BugInCF;
 
+import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.Element;
+import javax.lang.model.type.TypeKind;
+
 import exceptions.UnkownImmutabilityQualifierException;
 import pico.common.ExtendedViewpointAdapter;
 
-/**
- * Created by mier on 20/06/17.
- */
-public class PICOViewpointAdapter extends AbstractViewpointAdapter implements ExtendedViewpointAdapter {
+/** Created by mier on 20/06/17. */
+public class PICOViewpointAdapter extends AbstractViewpointAdapter
+        implements ExtendedViewpointAdapter {
 
     public PICOViewpointAdapter(AnnotatedTypeFactory atypeFactory) {
         super(atypeFactory);
@@ -43,7 +42,8 @@ public class PICOViewpointAdapter extends AbstractViewpointAdapter implements Ex
     }
 
     @Override
-    protected AnnotationMirror combineAnnotationWithAnnotation(AnnotationMirror receiverAnnotation, AnnotationMirror declaredAnnotation) {
+    protected AnnotationMirror combineAnnotationWithAnnotation(
+            AnnotationMirror receiverAnnotation, AnnotationMirror declaredAnnotation) {
         if (AnnotationUtils.areSame(declaredAnnotation, READONLY)) {
             return READONLY;
         } else if (AnnotationUtils.areSame(declaredAnnotation, MUTABLE)) {
@@ -57,41 +57,51 @@ public class PICOViewpointAdapter extends AbstractViewpointAdapter implements Ex
         } else if (AnnotationUtils.areSame(declaredAnnotation, RECEIVER_DEPENDANT_MUTABLE)) {
             return receiverAnnotation;
         } else {
-            throw new BugInCF("Unknown declared modifier: " + declaredAnnotation, new UnkownImmutabilityQualifierException());
+            throw new BugInCF(
+                    "Unknown declared modifier: " + declaredAnnotation,
+                    new UnkownImmutabilityQualifierException());
         }
     }
-//
-//    @Override
-//    protected AnnotatedTypeMirror combineAnnotationWithType(AnnotationMirror receiverAnnotation, AnnotatedTypeMirror declared) {
-//        boolean prevRdm = declared.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE);
-//        AnnotatedTypeMirror raw =  super.combineAnnotationWithType(receiverAnnotation, declared);
-//        if(prevRdm &&
-//                AnnotationUtils.containsSameByName(atypeFactory.getTypeDeclarationBounds(declared.getUnderlyingType()), MUTABLE)
-//                && (raw.hasAnnotation(IMMUTABLE) || raw.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE))) {
-//            raw.replaceAnnotation(MUTABLE);
-//        }
-//        return raw;
-//    }
 
-    public AnnotatedTypeMirror rawCombineAnnotationWithType(AnnotationMirror anno, AnnotatedTypeMirror type) {
-//        System.err.println("VPA: " + anno + " ->" + type);
+    //
+    //    @Override
+    //    protected AnnotatedTypeMirror combineAnnotationWithType(AnnotationMirror
+    // receiverAnnotation, AnnotatedTypeMirror declared) {
+    //        boolean prevRdm = declared.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE);
+    //        AnnotatedTypeMirror raw =  super.combineAnnotationWithType(receiverAnnotation,
+    // declared);
+    //        if(prevRdm &&
+    //
+    // AnnotationUtils.containsSameByName(atypeFactory.getTypeDeclarationBounds(declared.getUnderlyingType()), MUTABLE)
+    //                && (raw.hasAnnotation(IMMUTABLE) ||
+    // raw.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE))) {
+    //            raw.replaceAnnotation(MUTABLE);
+    //        }
+    //        return raw;
+    //    }
+
+    public AnnotatedTypeMirror rawCombineAnnotationWithType(
+            AnnotationMirror anno, AnnotatedTypeMirror type) {
+        //        System.err.println("VPA: " + anno + " ->" + type);
         return combineAnnotationWithType(anno, type);
     }
 
     @Override
-    public AnnotationMirror rawCombineAnnotationWithAnnotation(AnnotationMirror anno, AnnotationMirror type) {
-//        System.err.println("VPA: " + anno + " ->" + type);
+    public AnnotationMirror rawCombineAnnotationWithAnnotation(
+            AnnotationMirror anno, AnnotationMirror type) {
+        //        System.err.println("VPA: " + anno + " ->" + type);
         return combineAnnotationWithAnnotation(anno, type);
     }
 
     //
-//    @Override
-//    protected AnnotationMirror getModifier(AnnotatedTypeMirror atm, AnnotatedTypeFactory f) {
-//        return atm.getAnnotationInHierarchy(READONLY);
-//    }
+    //    @Override
+    //    protected AnnotationMirror getModifier(AnnotatedTypeMirror atm, AnnotatedTypeFactory f) {
+    //        return atm.getAnnotationInHierarchy(READONLY);
+    //    }
 
-//    @Override
-//    protected <TypeFactory extends AnnotatedTypeFactory> AnnotationMirror extractModifier(AnnotatedTypeMirror atm, TypeFactory f) {
-//        return null;
-//    }
+    //    @Override
+    //    protected <TypeFactory extends AnnotatedTypeFactory> AnnotationMirror
+    // extractModifier(AnnotatedTypeMirror atm, TypeFactory f) {
+    //        return null;
+    //    }
 }
