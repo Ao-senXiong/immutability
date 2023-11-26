@@ -36,6 +36,12 @@ jobs:
       - name: Build
         id: build
         run: ./.ci-build-without-test.sh
+<<<<<<< Updated upstream
+=======
+      - name: Spotless Check
+        if: matrix.jdk == 11 || matrix.jdk == 17
+        run: ./gradlew spotlessCheck
+>>>>>>> Stashed changes
       - name: PICO Typecheck Test
         if: ${{ steps.build.outcome == 'success' }}
         run: ./gradlew ImmutabilityTypecheckTest
