@@ -1,15 +1,28 @@
 /// Why doesn't this work on Travis under Java 7?
 /// The same text does in Randoop's build.gradle file.
+buildscript {
+    dependencies {
+        if (JavaVersion.current() >= JavaVersion.VERSION_11) {
+            // Code formatting; defines targets "spotlessApply" and "spotlessCheck".
+            // https://github.com/diffplug/spotless/tags ; see tags starting "gradle/"
+            // Only works on JDK 11+.
+            classpath 'com.diffplug.spotless:spotless-plugin-gradle:6.22.0'
+        }
+    }
+}
+
+
+
 plugins {
-    // Plugin that applies Google-Java-format to the Java files in the project.
-    // https://github.com/sherter/google-java-format-gradle-plugin
-    // id 'com.github.sherter.google-java-format' version '0.6'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 apply plugin: 'java'
 
 ext {
     isJava8 = JavaVersion.current() == JavaVersion.VERSION_1_8
+
+    isJava11plus = JavaVersion.current() >= JavaVersion.VERSION_11
     jsr308 = file(new File("..")).absolutePath
     cfPath = "${jsr308}/checker-framework"
     cfiPath = "${jsr308}/checker-framework-inference"
@@ -27,6 +40,60 @@ ext {
             "--add-exports", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
             "--add-opens", "jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
     ]
+    if (isJava11plus) {
+        apply plugin: 'com.diffplug.spotless'
+        spotless {
+            format 'misc', {
+                target '*.md', '*.tex', '.gitignore', 'Makefile'
+                indentWithSpaces(2)
+                trimTrailingWhitespace()
+            }
+
+            java {
+                googleJavaFormat().aosp()
+                importOrder('com', 'jdk', 'lib', 'lombok', 'org', 'java', 'javax')
+                formatAnnotations().addTypeAnnotation("PolyInitialized")
+            }
+
+            groovyGradle {
+                target '**/*.gradle'
+                greclipse()  // which formatter Spotless should use to format .gradle files.
+                indentWithSpaces(4)
+                trimTrailingWhitespace()
+            }
+        }
+    }
+}
+
+if (isJava11plus) {
+    apply plugin: 'com.diffplug.spotless'
+    spotless {
+        // Resolve the Spotless plugin dependencies from the buildscript repositories rather than the
+        // project repositories.  That way the spotless plugin does not use the locally built version of
+        // checker-qual as a dependency. Without this, errors like the follow are issued when running
+        // a spotless task without a locally-built version of checker-qual.jar:
+        // Could not determine the dependencies of task ':checker-qual:spotlessCheck'.
+        //  > Could not create task ':checker-qual:spotlessJavaCheck'.
+        //     > Could not create task ':checker-qual:spotlessJava'.
+        //        > File signature can only be created for existing regular files, given:
+        //          .../checker-framework/checker-qual/build/libs/checker-qual-3.25.1-SNAPSHOT.jar
+        predeclareDepsFromBuildscript()
+    }
+
+    spotlessPredeclare {
+        // Put all the formatters that have dependencies here.  Without this, errors like the following
+        // will happen:
+        // Could not determine the dependencies of task ':spotlessCheck'.
+        //  > Could not create task ':spotlessJavaCheck'.
+        //     > Could not create task ':spotlessJava'.
+        //        > Add a step with [com.google.googlejavaformat:google-java-format:1.15.0] into the `spotlessPredeclare` block in the root project.
+        java {
+            googleJavaFormat()
+        }
+        groovyGradle {
+            greclipse()
+        }
+    }
 }
 
 println '==================================='
