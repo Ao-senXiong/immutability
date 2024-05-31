@@ -39,7 +39,7 @@ public class PICOValidator extends BaseTypeValidator {
 
     @Override
     public Void visitDeclared(AnnotatedDeclaredType type, Tree tree) {
-        checkStaticReceiverDependantMutableError(type, tree);
+        checkStaticReceiverDependentMutableError(type, tree);
         checkImplicitlyImmutableTypeError(type, tree);
         checkOnlyOneAssignabilityModifierOnField(tree);
 
@@ -77,7 +77,7 @@ public class PICOValidator extends BaseTypeValidator {
 
     @Override
     public Void visitArray(AnnotatedArrayType type, Tree tree) {
-        checkStaticReceiverDependantMutableError(type, tree);
+        checkStaticReceiverDependentMutableError(type, tree);
         // Array can not be implicitly immutable
         return super.visitArray(type, tree);
     }
@@ -88,12 +88,12 @@ public class PICOValidator extends BaseTypeValidator {
         return super.visitPrimitive(type, tree);
     }
 
-    private void checkStaticReceiverDependantMutableError(AnnotatedTypeMirror type, Tree tree) {
+    private void checkStaticReceiverDependentMutableError(AnnotatedTypeMirror type, Tree tree) {
         if (!type.isDeclaration()  // variables in static contexts and static fields use class decl as enclosing type
                 && PICOTypeUtil.inStaticScope(visitor.getCurrentPath())
                 && !"".contentEquals(Objects.requireNonNull(TreePathUtil.enclosingClass(visitor.getCurrentPath())).getSimpleName())  // Exclude @RDM usages in anonymous classes
                 && type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
-            reportValidityResult("static.receiverdependantmutable.forbidden", type, tree);
+            reportValidityResult("static.receiverdependentmutable.forbidden", type, tree);
         }
     }
 
