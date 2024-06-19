@@ -28,6 +28,7 @@ class String {
   String substring(@Immutable String this, int var1, int var2);
   String toString(@Immutable String this);
   boolean equals(@Immutable Object var1);
+  boolean contentEquals(@Readonly CharSequence var1);
   static String valueOf(@Readonly Object var0);
   static String format(String var0, @Readonly Object @Readonly ... var1);
   static String format(@Readonly Locale l, String format, @Readonly Object @Readonly ... var1);
@@ -212,7 +213,7 @@ class StringJoiner {
 }
 
 class Arrays {
-  static <T> @Immutable List<T> asList(T @Readonly ... var0);
+  static <T> @Mutable List<T> asList(T @Readonly ... var0);
   static String toString(int @Readonly [] var0);
   static boolean equals(float @Readonly [] var0, float @Readonly [] var1);
   static boolean equals(double @Readonly [] var0, double @Readonly [] var1);
@@ -297,4 +298,10 @@ package java.awt;
 @ReceiverDependentMutable
 class Container {
   void add(@Readonly Component comp, @Readonly Object constraints);
+}
+
+package javax.lang.model.element;
+
+interface Name {
+    boolean contentEquals(@Readonly CharSequence var1);
 }
