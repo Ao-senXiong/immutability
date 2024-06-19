@@ -145,13 +145,18 @@ public class PICOCombineConstraintEncoder extends MaxSATAbstractConstraintEncode
     @Override
     public VecInt[] encodeConstant_Constant(ConstantSlot target, ConstantSlot declared, CombVariableSlot result) {
         List<VecInt> resultClauses = new ArrayList<VecInt>();
-        if (!isReceiverDependentMutable(declared)) {
-            resultClauses.add(VectorUtils.asVec(
-                    MathUtils.mapIdToMatrixEntry(result.getId(), id(declared.getValue()), lattice)));
-        } else {
-            resultClauses.add(VectorUtils.asVec(
-                    MathUtils.mapIdToMatrixEntry(result.getId(), id(target.getValue()), lattice)));
-            return resultClauses.toArray(new VecInt[resultClauses.size()]);
+        try {
+            if (!isReceiverDependentMutable(declared)) {
+                resultClauses.add(VectorUtils.asVec(
+                        MathUtils.mapIdToMatrixEntry(result.getId(), id(declared.getValue()), lattice)));
+            } else {
+                resultClauses.add(VectorUtils.asVec(
+                        MathUtils.mapIdToMatrixEntry(result.getId(), id(target.getValue()), lattice)));
+                return resultClauses.toArray(new VecInt[resultClauses.size()]);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+        return resultClauses.toArray(new VecInt[resultClauses.size()]);
     }
 }
