@@ -3,12 +3,13 @@ package pico.typecheck;
 import org.checkerframework.dataflow.expression.FieldAccess;
 import org.checkerframework.framework.flow.CFAbstractAnalysis;
 import org.checkerframework.framework.flow.CFAbstractStore;
+import qual.Immutable;
 
 import java.util.Map;
 
 public class PICONoInitStore extends CFAbstractStore<PICONoInitValue, PICONoInitStore> {
 
-    protected Map<FieldAccess, PICONoInitValue> initializedFields;
+    protected Map<@Immutable FieldAccess, PICONoInitValue> initializedFields;
 
     public PICONoInitStore(
             CFAbstractAnalysis<PICONoInitValue, PICONoInitStore, ?> analysis,

@@ -1,0 +1,10 @@
+import qual.Mutable;
+import qual.Immutable;
+import qual.ReceiverDependentMutable;
+import qual.Readonly;
+import qual.ObjectIdentityMethod;
+
+package org.checkerframework.dataflow.expression;
+
+@Immutable
+class FieldAccess {}
