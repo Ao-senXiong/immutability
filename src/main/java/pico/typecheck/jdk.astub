@@ -190,7 +190,7 @@ interface Map<K extends @Immutable Object, V> {
   void putAll(@Readonly Map<? extends K, ? extends V> m);
   Set<K> keySet(@Readonly Map<K, V> this);
   Collection<V> values(@Readonly Map<K, V> this);
-  Set<Map.Entry<K, V>> entrySet(@Readonly Map<K, V> this);
+  Set<Map.Entry<K, V>> entrySet(@Readonly Map< K, V> this);
 }
 
 @ReceiverDependentMutable
@@ -204,6 +204,7 @@ class HashMap<K extends @Immutable Object, V> {
 
 class Collections {
   static <T> @Immutable List<T> unmodifiableList(@Readonly List<? extends T> list);
+  static <T> @Immutable List<T> singletonList(T var0);
 }
 
 class StringJoiner {
@@ -305,3 +306,6 @@ package javax.lang.model.element;
 interface Name {
     boolean contentEquals(@Readonly CharSequence var1);
 }
+
+@ReceiverDependentMutable
+interface AnnotationMirror {}

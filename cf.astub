@@ -8,3 +8,63 @@ package org.checkerframework.dataflow.expression;
 
 @Immutable
 class FieldAccess {}
+
+package checkers.inference.solver.backend.maxsat.encoder;
+
+class MaxSATAbstractConstraintEncoder {
+    MaxSATAbstractConstraintEncoder(Lattice var0, Map<@Immutable AnnotationMirror, Integer> var1);
+}
+
+class MaxSATConstraintEncoderFactory {
+    MaxSATConstraintEncoderFactory(Lattice var0, Map<@Immutable AnnotationMirror, Integer> var1, MaxSatFormatTranslator var2);
+}
+
+package checkers.inference.solver.backend.maxsat;
+
+class MaxSatFormatTranslator {
+    Map<@Immutable AnnotationMirror, Integer> typeToInt;
+}
+
+package org.checkerframework.framework.source;
+
+class SourceChecker {
+    void reportError(Object source, String messageKey, @Readonly Object @Readonly ... args);
+}
+
+package org.checkerframework.framework.type;
+
+class AnnotatedTypeMirror {
+    @ReceiverDependentMutable
+    static class AnnotatedDeclaredType {}
+    void addMissingAnnotations(@Immutable Iterable<? extends AnnotationMirror> var0);
+    void addAnnotations(@Immutable Iterable<? extends AnnotationMirror> annotations);
+}
+
+package org.checkerframework.common.basetype;
+
+class BaseTypeVisitor<Factory extends GenericAnnotatedTypeFactory<?, ?, ?, ?>> extends SourceVisitor<Void, Void> {
+    boolean checkOverride(MethodTree var0, AnnotatedTypeMirror.AnnotatedExecutableType var1, AnnotatedTypeMirror.AnnotatedDeclaredType var2, AnnotatedTypeMirror.AnnotatedExecutableType var3, @Readonly AnnotatedTypeMirror.AnnotatedDeclaredType var4);
+}
+
+package checkers.inference.model;
+
+class ConstraintManager {
+    void addImplicationConstraint(@Immutable List<Constraint> var0, Constraint var1);
+    Constraint createImplicationConstraint(@Immutable List<Constraint> var0, Constraint var1);
+}
+
+package org.checkerframework.javacutil;
+
+class AnnotationUtils {
+    boolean containsSameByName(@Immutable Collection<? extends AnnotationMirror> var0, AnnotationMirror var1);
+}
+
+@Immutable
+class AnnotationMirrorSet {}
+
+package org.checkerframework.framework.util;
+
+class AnnotatedTypes {
+    static Map<@Immutable AnnotatedDeclaredType, ExecutableElement> overriddenMethods(Elements var0, AnnotatedTypeFactory var1, ExecutableElement var2);
+    static Map<@Immutable AnnotatedDeclaredType, ExecutableElement> overriddenMethods(Elements var0, ExecutableElement var1, Collection<AnnotatedTypeMirror.AnnotatedDeclaredType> var2);
+}
