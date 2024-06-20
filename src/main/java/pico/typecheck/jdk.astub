@@ -213,7 +213,7 @@ class StringJoiner {
 }
 
 class Arrays {
-  static <T> @Mutable List<T> asList(T @Readonly ... var0);
+  static <T> @Immutable List<T> asList(T @Readonly ... var0);
   static String toString(int @Readonly [] var0);
   static boolean equals(float @Readonly [] var0, float @Readonly [] var1);
   static boolean equals(double @Readonly [] var0, double @Readonly [] var1);
