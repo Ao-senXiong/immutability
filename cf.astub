@@ -38,6 +38,12 @@ class AnnotatedTypeMirror {
     static class AnnotatedDeclaredType {}
     void addMissingAnnotations(@Immutable Iterable<? extends AnnotationMirror> var0);
     void addAnnotations(@Immutable Iterable<? extends AnnotationMirror> annotations);
+    void replaceAnnotations(@Immutable Iterable<? extends AnnotationMirror> var0);
+}
+
+class QualifierHierarchy {
+    AnnotationMirror findAnnotationInHierarchy(@Immutable Collection<? extends AnnotationMirror> var0, AnnotationMirror var1);
+    AnnotationMirror findAnnotationInSameHierarchy(@Immutable Collection<? extends AnnotationMirror> var0, AnnotationMirror var1);
 }
 
 package org.checkerframework.common.basetype;
@@ -61,6 +67,10 @@ class AnnotationUtils {
 
 @Immutable
 class AnnotationMirrorSet {}
+
+class AnnotationMirrorSet {
+    AnnotationMirrorSet(@Immutable Collection<? extends AnnotationMirror> var0);
+}
 
 package org.checkerframework.framework.util;
 

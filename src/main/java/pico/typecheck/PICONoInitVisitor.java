@@ -48,6 +48,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import pico.common.PICOTypeUtil;
+import qual.Immutable;
 
 public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFactory> {
 
@@ -244,9 +245,9 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
                 (AnnotatedDeclaredType)
                         atypeFactory.getAnnotatedType(methodElement.getEnclosingElement());
 
-        Map<AnnotatedDeclaredType, ExecutableElement> overriddenMethods =
+        Map<@Immutable AnnotatedDeclaredType, ExecutableElement> overriddenMethods =
                 AnnotatedTypes.overriddenMethods(elements, atypeFactory, methodElement);
-        for (Map.Entry<AnnotatedDeclaredType, ExecutableElement> pair :
+        for (Map.Entry<@Immutable AnnotatedDeclaredType, ExecutableElement> pair :
                 overriddenMethods.entrySet()) {
             AnnotatedDeclaredType overriddenType = pair.getKey();
             AnnotatedExecutableType overriddenMethod =

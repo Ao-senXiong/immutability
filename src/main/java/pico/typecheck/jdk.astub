@@ -179,6 +179,10 @@ class HashSet<E> {
   boolean remove(@Readonly Object var1);
 }
 
+class LinkedHashSet<E> {
+    LinkedHashSet(@Immutable Collection<? extends E> var0);
+}
+
 @ReceiverDependentMutable
 interface Map<K extends @Immutable Object, V> {
   int size(@Readonly Map<K, V> this);
@@ -205,6 +209,7 @@ class HashMap<K extends @Immutable Object, V> {
 class Collections {
   static <T> @Immutable List<T> unmodifiableList(@Readonly List<? extends T> list);
   static <T> @Immutable List<T> singletonList(T var0);
+  static <T> @Immutable Set<T> singleton(T var0);
 }
 
 class StringJoiner {
@@ -309,3 +314,8 @@ interface Name {
 
 @ReceiverDependentMutable
 interface AnnotationMirror {}
+
+package javax.lang.model.type;
+interface TypeMirror {
+    @Immutable List<? extends AnnotationMirror> getAnnotationMirrors();
+}

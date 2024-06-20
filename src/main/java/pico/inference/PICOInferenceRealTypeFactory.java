@@ -54,7 +54,7 @@ import static pico.typecheck.PICOAnnotationMirrorHolder.*;
  */
 public class PICOInferenceRealTypeFactory extends BaseInferenceRealTypeFactory {
 
-    private static final List<String> IMMUTABLE_ALIASES = Arrays.asList(
+    private static final @Immutable List<String> IMMUTABLE_ALIASES = Arrays.asList(
             "com.google.errorprone.annotations.Immutable",
             "edu.cmu.cs.glacier.qual.Immutable");
 
