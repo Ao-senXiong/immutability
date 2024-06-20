@@ -5,6 +5,7 @@ import checkers.inference.solver.backend.SolverFactory;
 import checkers.inference.solver.backend.maxsat.MaxSatFormatTranslator;
 import checkers.inference.solver.backend.maxsat.MaxSatSolverFactory;
 import checkers.inference.solver.frontend.Lattice;
+import qual.Immutable;
 
 import javax.lang.model.element.AnnotationMirror;
 
@@ -27,12 +28,12 @@ public class PICOSolverEngine extends SolverEngine {
 //        return result;
 //    } // TODO: default write into statistic.txt
 
-    public static void writeInferenceResult(String filename, Map<Integer, AnnotationMirror> result) {
+    public static void writeInferenceResult(String filename, Map<Integer, @Immutable AnnotationMirror> result) {
         String writePath = new File(new File("").getAbsolutePath()) + File.separator + filename;
         StringBuilder sb = new StringBuilder();
 
-        Map<AnnotationMirror, Integer> inferredAnnotationsCount = new HashMap<>();
-        for (AnnotationMirror inferedAnnotation : result.values()) {
+        Map<@Immutable AnnotationMirror, Integer> inferredAnnotationsCount = new HashMap<>();
+        for (@Immutable AnnotationMirror inferedAnnotation : result.values()) {
 
             if (!inferredAnnotationsCount.containsKey(inferedAnnotation)) {
                 inferredAnnotationsCount.put(inferedAnnotation, 1);
@@ -42,7 +43,7 @@ public class PICOSolverEngine extends SolverEngine {
         }
 
         recordKeyValue(sb, "TotalSlots", String.valueOf(result.size()), String.valueOf(100));
-        for (Map.Entry<AnnotationMirror, Integer> e : inferredAnnotationsCount.entrySet()) {
+        for (Map.Entry<@Immutable AnnotationMirror, Integer> e : inferredAnnotationsCount.entrySet()) {
             recordKeyValue(sb, e.getKey().toString(), String.valueOf(e.getValue()), String.format("%.2f", (100*(float)e.getValue()/result.size())));
         }
 

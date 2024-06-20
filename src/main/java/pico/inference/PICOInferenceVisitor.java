@@ -36,6 +36,7 @@ import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.*;
 import pico.common.PICOTypeUtil;
+import qual.Immutable;
 import qual.ReceiverDependentMutable;
 
 import javax.lang.model.element.AnnotationMirror;
@@ -342,7 +343,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
                 }
             }
 
-            Set<AnnotationMirror> declAnno = atypeFactory.getTypeDeclarationBounds(type.getUnderlyingType());
+            @Immutable AnnotationMirrorSet declAnno = atypeFactory.getTypeDeclarationBounds(type.getUnderlyingType());
             if ((declAnno != null && AnnotationUtils.containsSameByName(declAnno, IMMUTABLE)) ||
                     element.getKind() != ElementKind.FIELD || !type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
                 checkAndReportInvalidAnnotationOnUse(type, node);
@@ -577,9 +578,9 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
             enclosingType = PICOTypeUtil.getBoundOfEnclosingAnonymousClass(node, atypeFactory);
         }
 
-        Map<AnnotatedDeclaredType, ExecutableElement> overriddenMethods =
+        Map<@Immutable AnnotatedDeclaredType, ExecutableElement> overriddenMethods =
                 AnnotatedTypes.overriddenMethods(elements, atypeFactory, methodElement);
-        for (Map.Entry<AnnotatedDeclaredType, ExecutableElement> pair :
+        for (Map.Entry<@Immutable AnnotatedDeclaredType, ExecutableElement> pair :
                 overriddenMethods.entrySet()) {
             AnnotatedDeclaredType overriddenType = pair.getKey();
             AnnotatedExecutableType overriddenMethod =

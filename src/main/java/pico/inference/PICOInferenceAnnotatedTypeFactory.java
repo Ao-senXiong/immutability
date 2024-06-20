@@ -193,7 +193,7 @@ public class PICOInferenceAnnotatedTypeFactory extends InferenceAnnotatedTypeFac
         // get stub & default from element.
         AnnotatedTypeMirror atm = stubTypes.getAnnotatedTypeMirror(getProcessingEnv().getTypeUtils().asElement(type));
         if (atm != null) {
-            Set<AnnotationMirror> set = atm.getAnnotations();
+            AnnotationMirrorSet set = atm.getAnnotations();
             if (!set.isEmpty()) {
                 return new AnnotationMirrorSet(
                         slotManager.getAnnotation(slotManager.getSlot(set.iterator().next())));

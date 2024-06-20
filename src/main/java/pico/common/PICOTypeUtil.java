@@ -23,12 +23,7 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayTyp
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.util.AnnotatedTypes;
-import org.checkerframework.javacutil.AnnotationProvider;
-import org.checkerframework.javacutil.AnnotationUtils;
-import org.checkerframework.javacutil.ElementUtils;
-import org.checkerframework.javacutil.TreeUtils;
-import org.checkerframework.javacutil.TreePathUtil;
-import org.checkerframework.javacutil.TypesUtils;
+import org.checkerframework.javacutil.*;
 import qual.Assignable;
 import qual.Immutable;
 import qual.ObjectIdentityMethod;
@@ -224,7 +219,7 @@ public class PICOTypeUtil {
         // Check if it is overriding the target method
         // Because AnnotatedTypes.overriddenMethods returns all the methods overriden in the class hierarchy, we need to
         // iterate over the set to check if it's overriding corresponding methods specifically in java.lang.Object class
-        Iterator<Map.Entry<AnnotatedDeclaredType, ExecutableElement>> overriddenMethods
+        Iterator<Map.Entry<@Immutable AnnotatedDeclaredType, ExecutableElement>> overriddenMethods
                 = AnnotatedTypes.overriddenMethods(annotatedTypeFactory.getElementUtils(), annotatedTypeFactory, executableElement)
                 .entrySet().iterator();
         while (overriddenMethods.hasNext()) {
@@ -253,9 +248,9 @@ public class PICOTypeUtil {
                        Element typeElement = adt.getUnderlyingType().asElement();
 
                        // add RDM if bound=M and enclosingBound=M/RDM
-                       Set<AnnotationMirror> enclosingBound = annotatedTypeFactory.getTypeDeclarationBounds(
+                       AnnotationMirrorSet enclosingBound = annotatedTypeFactory.getTypeDeclarationBounds(
                                Objects.requireNonNull(ElementUtils.enclosingTypeElement(element)).asType());
-                       Set<AnnotationMirror> declBound = annotatedTypeFactory.getTypeDeclarationBounds(element.asType());
+                       AnnotationMirrorSet declBound = annotatedTypeFactory.getTypeDeclarationBounds(element.asType());
                        if (AnnotationUtils.containsSameByName(declBound, MUTABLE)) {
                            if (AnnotationUtils.containsSameByName(enclosingBound, MUTABLE)) {
                                annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDANT_MUTABLE);

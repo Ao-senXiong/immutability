@@ -11,11 +11,13 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedPrimitiveType;
+import org.checkerframework.javacutil.AnnotationMirrorSet;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 import pico.common.PICOTypeUtil;
 import pico.typecheck.PICONoInitAnnotatedTypeFactory;
+import qual.Immutable;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
@@ -96,11 +98,11 @@ public class PICOInferenceValidator extends InferenceValidator{
             if (tree instanceof VariableTree) {
                 VariableElement element = TreeUtils.elementFromDeclaration((VariableTree)tree);
                 if (element.getKind() == ElementKind.FIELD && ElementUtils.enclosingTypeElement(element) != null) {
-                    Set<AnnotationMirror> enclosingBound =
+                    @Immutable AnnotationMirrorSet enclosingBound =
                             atypeFactory.getTypeDeclarationBounds(
                                     Objects.requireNonNull(ElementUtils.enclosingTypeElement(element)).asType());
 
-                    Set<AnnotationMirror> declaredBound =
+                    @Immutable AnnotationMirrorSet declaredBound =
                             atypeFactory.getTypeDeclarationBounds(type.getUnderlyingType());
 
                     if(AnnotationUtils.containsSameByName(declaredBound, MUTABLE)
@@ -168,7 +170,7 @@ public class PICOInferenceValidator extends InferenceValidator{
     }
 
     private void checkLocalVariableDefaults(AnnotatedDeclaredType type, Tree tree) {
-        Set<AnnotationMirror> bounds =
+        AnnotationMirrorSet bounds =
                 atypeFactory.getTypeDeclarationBounds(type.getUnderlyingType());
 
         AnnotatedDeclaredType elemType = type.deepCopy();

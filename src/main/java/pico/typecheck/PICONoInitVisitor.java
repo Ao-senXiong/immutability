@@ -343,7 +343,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
     private boolean isAllowedAssignableField(
             AnnotatedTypeMirror receiverType, ExpressionTree node) {
         Element fieldElement = TreeUtils.elementFromUse(node);
-        Set<AnnotationMirror> bounds =
+        AnnotationMirrorSet bounds =
                 atypeFactory.getTypeDeclarationBounds(TreeUtils.typeOf(node));
         AnnotatedTypeMirror fieldType = atypeFactory.getAnnotatedType(fieldElement);
         if (fieldElement == null) return false;

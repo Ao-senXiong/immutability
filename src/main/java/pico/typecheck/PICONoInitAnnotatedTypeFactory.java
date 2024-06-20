@@ -368,7 +368,7 @@ public class PICONoInitAnnotatedTypeFactory
         public Void visitDeclared(AnnotatedTypeMirror.AnnotatedDeclaredType type, Void aVoid) {
 
             Element element = type.getUnderlyingType().asElement();
-            Set<AnnotationMirror> annosToApply = getDefaultAnnosForUses(element);
+            AnnotationMirrorSet annosToApply = getDefaultAnnosForUses(element);
 
             if (annosToApply.contains(MUTABLE) || annosToApply.contains(IMMUTABLE)) {
                 type.addMissingAnnotations(annosToApply);
