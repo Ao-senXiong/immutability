@@ -153,7 +153,7 @@ public class PICOInferenceRealTypeFactory extends BaseInferenceRealTypeFactory {
         }
         ParameterizedExecutableType mType = super.constructorFromUse(tree);
         AnnotatedTypeMirror.AnnotatedExecutableType method = mType.executableType;
-        if (!hasExplicitAnnos && method.getReturnType().hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+        if (!hasExplicitAnnos && method.getReturnType().hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
             method.getReturnType().replaceAnnotation(MUTABLE);
         }
         return mType;
@@ -269,7 +269,7 @@ public class PICOInferenceRealTypeFactory extends BaseInferenceRealTypeFactory {
             Element ele = ((DeclaredType) type).asElement();
             if (ele.getKind() == ElementKind.ENUM) {
                 if (!AnnotationUtils.containsSameByName(getDeclAnnotations(ele), MUTABLE) &&
-                        !AnnotationUtils.containsSameByName(getDeclAnnotations(ele), RECEIVER_DEPENDANT_MUTABLE)) { // no decl anno
+                        !AnnotationUtils.containsSameByName(getDeclAnnotations(ele), RECEIVER_DEPENDENT_MUTABLE)) { // no decl anno
                     return new AnnotationMirrorSet(IMMUTABLE);
                 }
             }

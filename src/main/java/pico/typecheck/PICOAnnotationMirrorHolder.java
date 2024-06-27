@@ -21,7 +21,7 @@ public class PICOAnnotationMirrorHolder {
     public static AnnotationMirror READONLY;
     public static AnnotationMirror MUTABLE;
     public static AnnotationMirror POLY_MUTABLE;
-    public static AnnotationMirror RECEIVER_DEPENDANT_MUTABLE;
+    public static AnnotationMirror RECEIVER_DEPENDENT_MUTABLE;
     public static AnnotationMirror IMMUTABLE;
     public static AnnotationMirror BOTTOM;
     public static AnnotationMirror COMMITED;
@@ -31,7 +31,7 @@ public class PICOAnnotationMirrorHolder {
         READONLY = AnnotationBuilder.fromClass(elements, Readonly.class);
         MUTABLE = AnnotationBuilder.fromClass(elements, Mutable.class);
         POLY_MUTABLE = AnnotationBuilder.fromClass(elements, PolyMutable.class);
-        RECEIVER_DEPENDANT_MUTABLE = AnnotationBuilder.fromClass(elements, ReceiverDependentMutable.class);
+        RECEIVER_DEPENDENT_MUTABLE = AnnotationBuilder.fromClass(elements, ReceiverDependentMutable.class);
         IMMUTABLE = AnnotationBuilder.fromClass(elements, Immutable.class);
         BOTTOM = AnnotationBuilder.fromClass(elements, Bottom.class);
 

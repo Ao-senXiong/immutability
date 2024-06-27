@@ -63,7 +63,7 @@ public class PICOValidator extends BaseTypeValidator {
                         atypeFactory.getTypeDeclarationBounds(type.getUnderlyingType());
 
                 if(AnnotationUtils.containsSameByName(declaredBound, MUTABLE)
-                        && type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)
+                        && type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
                         && AnnotationUtils.containsSameByName(enclosingBound, MUTABLE)) {
                     return false;
                 }
@@ -89,7 +89,7 @@ public class PICOValidator extends BaseTypeValidator {
         if (!type.isDeclaration()  // variables in static contexts and static fields use class decl as enclosing type
                 && PICOTypeUtil.inStaticScope(visitor.getCurrentPath())
                 && !"".contentEquals(Objects.requireNonNull(TreePathUtil.enclosingClass(visitor.getCurrentPath())).getSimpleName())  // Exclude @RDM usages in anonymous classes
-                && type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+                && type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
             reportValidityResult("static.receiverdependentmutable.forbidden", type, tree);
         }
     }

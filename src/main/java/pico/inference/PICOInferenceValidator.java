@@ -63,7 +63,7 @@ public class PICOInferenceValidator extends InferenceValidator{
         if (infer) {
             for (AnnotatedTypeMirror arg : type.getTypeArguments()) {
                 ((PICOInferenceVisitor) visitor).mainIsNoneOf(arg,
-                        new AnnotationMirror[]{POLY_MUTABLE, BOTTOM, RECEIVER_DEPENDANT_MUTABLE},
+                        new AnnotationMirror[]{POLY_MUTABLE, BOTTOM, RECEIVER_DEPENDENT_MUTABLE},
                         "type.invalid.annotations.on.use", tree);
             }
         }
@@ -106,7 +106,7 @@ public class PICOInferenceValidator extends InferenceValidator{
                             atypeFactory.getTypeDeclarationBounds(type.getUnderlyingType());
 
                     if(AnnotationUtils.containsSameByName(declaredBound, MUTABLE)
-                            && type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)
+                            && type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
                             && AnnotationUtils.containsSameByName(enclosingBound, MUTABLE)) {
                         return false;
                     }
@@ -121,9 +121,9 @@ public class PICOInferenceValidator extends InferenceValidator{
         // Added condition to ensure not class decl.
         if (PICOTypeUtil.inStaticScope(visitor.getCurrentPath()) && !type.isDeclaration()) {
             if (infer) {
-                ((PICOInferenceVisitor)visitor).mainIsNot(type, RECEIVER_DEPENDANT_MUTABLE, "static.receiverDependentMutable.forbidden", tree);
+                ((PICOInferenceVisitor)visitor).mainIsNot(type, RECEIVER_DEPENDENT_MUTABLE, "static.receiverDependentMutable.forbidden", tree);
             } else {
-                if (type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+                if (type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
                     reportValidityResult("static.receiverDependentMutable.forbidden", type, tree);
                 }
             }
@@ -137,7 +137,7 @@ public class PICOInferenceValidator extends InferenceValidator{
         if (PICOTypeUtil.isImplicitlyImmutableType(type)) {
             if (infer) {
                 ((PICOInferenceVisitor)visitor).mainIsNoneOf(type,
-                        new AnnotationMirror[]{READONLY, MUTABLE, RECEIVER_DEPENDANT_MUTABLE, BOTTOM},
+                        new AnnotationMirror[]{READONLY, MUTABLE, RECEIVER_DEPENDENT_MUTABLE, BOTTOM},
                         "type.invalid.annotations.on.use", tree);
             } else {
                 // FIXME workaround for typecheck. How should inference handle BOTTOM?

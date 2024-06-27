@@ -122,7 +122,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
                 // type-check
                 return !AnnotationUtils.areSame(enclosingBound, MUTABLE) ||
                             ifAnnoIsThenMainIsOneOf(extractVarAnnot(declarationType), MUTABLE, useType,
-                            new AnnotationMirror[]{MUTABLE, RECEIVER_DEPENDANT_MUTABLE});
+                            new AnnotationMirror[]{MUTABLE, RECEIVER_DEPENDENT_MUTABLE});
 //                if(declarationType.hasAnnotation(MUTABLE)
 //                && useType.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)
 //                && AnnotationUtils.containsSameByName(enclosingBound, MUTABLE)) {
@@ -197,7 +197,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
         Slot useSlot = slotManager.getSlot(useType);
         Slot mutable = slotManager.getSlot(MUTABLE);
         Slot immutable = slotManager.getSlot(IMMUTABLE);
-        Slot rdm = slotManager.getSlot(RECEIVER_DEPENDANT_MUTABLE);
+        Slot rdm = slotManager.getSlot(RECEIVER_DEPENDENT_MUTABLE);
         // declType == @Mutable -> useType != @Immutable
         Constraint isMutable = constraintManager.createEqualityConstraint(declSlot, mutable);
         Constraint notImmutable = constraintManager.createInequalityConstraint(useSlot, immutable);
@@ -304,7 +304,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
             if (checker.hasOption("optimalSolution") && element != null
                     && element.getKind() == ElementKind.FIELD && !ElementUtils.isStatic(element)) {
                 // Recursively prefer to be rdm and immutable
-                addDeepPreference(type, RECEIVER_DEPENDANT_MUTABLE, 3, node);
+                addDeepPreference(type, RECEIVER_DEPENDENT_MUTABLE, 3, node);
                 addDeepPreference(type, IMMUTABLE, 3, node);
             }
 
@@ -313,7 +313,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
             if (element != null && element.getKind() == ElementKind.FIELD && !ElementUtils.isStatic(element)) {
                 if (type instanceof AnnotatedDeclaredType) {
                     ifBoundContainsThenMainIsOneOf((AnnotatedDeclaredType) type, MUTABLE,
-                            new AnnotationMirror[]{MUTABLE, RECEIVER_DEPENDANT_MUTABLE});
+                            new AnnotationMirror[]{MUTABLE, RECEIVER_DEPENDENT_MUTABLE});
                 }
             }
 
@@ -332,7 +332,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
 
             if (type instanceof AnnotatedDeclaredType) {
                 for (AnnotatedTypeMirror arg : ((AnnotatedDeclaredType) type).getTypeArguments()) {
-                    mainIsNoneOf(arg, new AnnotationMirror[]{POLY_MUTABLE, BOTTOM, RECEIVER_DEPENDANT_MUTABLE},
+                    mainIsNoneOf(arg, new AnnotationMirror[]{POLY_MUTABLE, BOTTOM, RECEIVER_DEPENDENT_MUTABLE},
                             "type.invalid.annotations.on.use", node);
                 }
             }
@@ -345,7 +345,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
 
             @Immutable AnnotationMirrorSet declAnno = atypeFactory.getTypeDeclarationBounds(type.getUnderlyingType());
             if ((declAnno != null && AnnotationUtils.containsSameByName(declAnno, IMMUTABLE)) ||
-                    element.getKind() != ElementKind.FIELD || !type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+                    element.getKind() != ElementKind.FIELD || !type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
                 checkAndReportInvalidAnnotationOnUse(type, node);
             }
         }
@@ -402,7 +402,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
                         slotManager.getSlot(MUTABLE),
                         slotManager.getSlot(mainAtm))),
                 constraintManager.createEqualityConstraint(
-                        slotManager.getSlot(RECEIVER_DEPENDANT_MUTABLE),
+                        slotManager.getSlot(RECEIVER_DEPENDENT_MUTABLE),
                         slotManager.getSlot(mainAtm)
                 )
         );
@@ -513,7 +513,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
                 SlotManager slotManager = InferenceMain.getInstance().getSlotManager();
                 Slot boundSlot = slotManager.getSlot(bound);
                 Slot consRetSlot = slotManager.getSlot(constructorReturnType);
-                Slot rdmSlot = slotManager.getSlot(RECEIVER_DEPENDANT_MUTABLE);
+                Slot rdmSlot = slotManager.getSlot(RECEIVER_DEPENDENT_MUTABLE);
                 Constraint inequalityConstraint = constraintManager.createInequalityConstraint(boundSlot, rdmSlot);
                 Constraint subtypeConstraint = constraintManager.createSubtypeConstraint(consRetSlot, boundSlot);
                 // bound != @ReceiverDependentMutable -> consRet <: bound
@@ -761,13 +761,13 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
             Slot receiverSlot = slotManager.getSlot(receiverType);
             Slot fieldSlot = slotManager.getSlot(fieldType);
             Slot readonly = slotManager.getSlot(READONLY);
-            Slot receiver_dependant_mutable = slotManager.getSlot(RECEIVER_DEPENDANT_MUTABLE);
+            Slot receiver_dependant_mutable = slotManager.getSlot(RECEIVER_DEPENDENT_MUTABLE);
             Constraint receiverReadOnly = constraintManager.createEqualityConstraint(receiverSlot, readonly);
             Constraint fieldNotRDM = constraintManager.createInequalityConstraint(fieldSlot, receiver_dependant_mutable);
             //  receiver = READONLY
             constraintManager.addImplicationConstraint(Collections.singletonList(receiverReadOnly), fieldNotRDM);
         } else {
-            if (receiverType.hasAnnotation(READONLY) && fieldType.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+            if (receiverType.hasAnnotation(READONLY) && fieldType.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
                 reportFieldOrArrayWriteError(node, variable, receiverType);
             }
         }
@@ -887,7 +887,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
             mainIsNoneOf(type, new AnnotationMirror[]{READONLY, BOTTOM}, "pico.new.invalid", node);
         } else {
             if (!(type.hasAnnotation(IMMUTABLE) || type.hasAnnotation(MUTABLE) ||
-                    type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE) || type.hasAnnotation(POLY_MUTABLE))) {
+                    type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE) || type.hasAnnotation(POLY_MUTABLE))) {
                 checker.reportError(node, "pico.new.invalid", type);
             }
         }
@@ -976,7 +976,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
         AnnotatedDeclaredType bound = PICOTypeUtil.getBoundTypeOfTypeDeclaration(typeElement, atypeFactory);
 
         if (!infer) {
-            if (bound.hasAnnotation(IMMUTABLE) || bound.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+            if (bound.hasAnnotation(IMMUTABLE) || bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
                 for(Tree member : node.getMembers()) {
                     if(member.getKind() == Kind.VARIABLE) {
                         Element ele = TreeUtils.elementFromTree(member);
@@ -1001,7 +1001,7 @@ public class PICOInferenceVisitor extends InferenceVisitor<PICOInferenceChecker,
         mainIsNot(bound, POLY_MUTABLE, "class.bound.invalid", node);
         mainIsNot(bound, BOTTOM, "class.bound.invalid", node);
         if (checker.hasOption("optimalSolution")) {
-            addPreference(bound, RECEIVER_DEPENDANT_MUTABLE, 2);
+            addPreference(bound, RECEIVER_DEPENDENT_MUTABLE, 2);
             addPreference(bound, IMMUTABLE, 2);
         }
 

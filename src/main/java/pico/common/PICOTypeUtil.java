@@ -49,7 +49,7 @@ import java.util.Set;
 import static pico.typecheck.PICOAnnotationMirrorHolder.IMMUTABLE;
 import static pico.typecheck.PICOAnnotationMirrorHolder.MUTABLE;
 import static pico.typecheck.PICOAnnotationMirrorHolder.READONLY;
-import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDANT_MUTABLE;
+import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDENT_MUTABLE;
 
 public class PICOTypeUtil {
 
@@ -253,18 +253,18 @@ public class PICOTypeUtil {
                        AnnotationMirrorSet declBound = annotatedTypeFactory.getTypeDeclarationBounds(element.asType());
                        if (AnnotationUtils.containsSameByName(declBound, MUTABLE)) {
                            if (AnnotationUtils.containsSameByName(enclosingBound, MUTABLE)) {
-                               annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDANT_MUTABLE);
+                               annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDENT_MUTABLE);
                            }
                        }
                        if (typeElement instanceof TypeElement) {
                            AnnotatedDeclaredType bound = getBoundTypeOfTypeDeclaration((TypeElement) typeElement, annotatedTypeFactory);
-                           if (bound.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
-                               annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDANT_MUTABLE);
+                           if (bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
+                               annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDENT_MUTABLE);
                            }
                        }
                    } else if (explicitATM instanceof AnnotatedArrayType) {
                        // Also apply rdm to array main.
-                       annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDANT_MUTABLE);
+                       annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDENT_MUTABLE);
                    }
                }
            }

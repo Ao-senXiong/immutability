@@ -6,7 +6,7 @@ import static pico.typecheck.PICOAnnotationMirrorHolder.IMMUTABLE;
 import static pico.typecheck.PICOAnnotationMirrorHolder.MUTABLE;
 import static pico.typecheck.PICOAnnotationMirrorHolder.POLY_MUTABLE;
 import static pico.typecheck.PICOAnnotationMirrorHolder.READONLY;
-import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDANT_MUTABLE;
+import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDENT_MUTABLE;
 
 import com.sun.source.tree.ArrayAccessTree;
 import com.sun.source.tree.AssignmentTree;
@@ -52,12 +52,8 @@ import qual.Immutable;
 
 public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFactory> {
 
-    final Map<String, Integer> fbcViolatedMethods;
-
     public PICONoInitVisitor(BaseTypeChecker checker) {
         super(checker);
-        boolean shouldOutputFbcError = checker.hasOption("printFbcErrors");
-        fbcViolatedMethods = shouldOutputFbcError ? new HashMap<>() : null;
     }
 
     @Override
@@ -210,7 +206,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
             AnnotatedDeclaredType declareReceiverType = executableType.getReceiverType();
             if (declareReceiverType != null) {
                 if (bound != null
-                        && !bound.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)
+                        && !bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
                         && !atypeFactory
                                 .getQualifierHierarchy()
                                 .isSubtypeQualifiersOnly(
@@ -352,8 +348,8 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         // the second and third predicates ensure that the field is actually rdm (since sometimes we
         // replace implicitly mutable with rdm to protect transitive immutability).
         return !(receiverType.hasAnnotation(READONLY)
-                && AnnotationUtils.containsSameByName(bounds, RECEIVER_DEPENDANT_MUTABLE)
-                && fieldType.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE));
+                && AnnotationUtils.containsSameByName(bounds, RECEIVER_DEPENDENT_MUTABLE)
+                && fieldType.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE));
     }
 
     private void reportFieldOrArrayWriteError(
@@ -391,7 +387,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
                 atypeFactory.getTypeDeclarationBoundForMutability(type.getUnderlyingType());
         if ((declAnno != null && AnnotationUtils.areSameByName(declAnno, IMMUTABLE))
                 || element.getKind() != ElementKind.FIELD
-                || !type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+                || !type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
             checkAndReportInvalidAnnotationOnUse(type, node);
         }
         return super.visitVariable(node, p);
@@ -439,7 +435,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         AnnotatedTypeMirror type = atypeFactory.getAnnotatedType(node);
         if (!(type.hasAnnotation(IMMUTABLE)
                 || type.hasAnnotation(MUTABLE)
-                || type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)
+                || type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
                 || type.hasAnnotation(POLY_MUTABLE))) {
             checker.reportError(node, "pico.new.invalid", type);
         }
@@ -490,7 +486,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
                 PICOTypeUtil.getBoundTypeOfTypeDeclaration(typeElement, atypeFactory);
         // Has to be either @Mutable, @ReceiverDependentMutable or @Immutable, nothing else
         if (!bound.hasAnnotation(MUTABLE)
-                && !bound.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)
+                && !bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
                 && !bound.hasAnnotation(IMMUTABLE)) {
             checker.reportError(node, "class.bound.invalid", bound);
             return; // Doesn't process the class tree anymore
@@ -503,7 +499,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         // * Member is field
         // * Member's declared bound == Mutable
         // * Member's use anno == null
-        if (bound.hasAnnotation(IMMUTABLE) || bound.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+        if (bound.hasAnnotation(IMMUTABLE) || bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
             for (Tree member : node.getMembers()) {
                 if (member.getKind() == Kind.VARIABLE) {
                     Element ele = TreeUtils.elementFromTree(member);

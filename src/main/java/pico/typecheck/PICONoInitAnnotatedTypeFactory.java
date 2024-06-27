@@ -130,7 +130,7 @@ public class PICONoInitAnnotatedTypeFactory
         boolean hasExplicitAnnos = !getExplicitNewClassAnnos(tree).isEmpty();
         ParameterizedExecutableType mType = super.constructorFromUse(tree);
         AnnotatedExecutableType method = mType.executableType;
-        if (!hasExplicitAnnos && method.getReturnType().hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+        if (!hasExplicitAnnos && method.getReturnType().hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
             method.getReturnType().replaceAnnotation(MUTABLE);
         }
         return mType;
@@ -167,12 +167,12 @@ public class PICONoInitAnnotatedTypeFactory
         public Void visitNewArray(NewArrayTree tree, AnnotatedTypeMirror type) {
             AnnotatedTypeMirror componentType =
                     ((AnnotatedTypeMirror.AnnotatedArrayType) type).getComponentType();
-            boolean noExplicitATM = !componentType.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE);
+            boolean noExplicitATM = !componentType.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE);
             super.visitNewArray(tree, type);
             // if new explicit anno before, but RDM after, the RDM must come from the type
             // declaration bound
             // however, for type has declaration bound as RDM, its default use is mutable.
-            if (noExplicitATM && componentType.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+            if (noExplicitATM && componentType.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
                 componentType.replaceAnnotation(MUTABLE);
             }
             return null;
@@ -182,7 +182,7 @@ public class PICONoInitAnnotatedTypeFactory
         public Void visitTypeCast(TypeCastTree node, AnnotatedTypeMirror type) {
             boolean hasExplicitAnnos = !type.getAnnotations().isEmpty();
             super.visitTypeCast(node, type);
-            if (!hasExplicitAnnos && type.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+            if (!hasExplicitAnnos && type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
                 type.replaceAnnotation(MUTABLE);
             }
             return null;
@@ -233,7 +233,7 @@ public class PICONoInitAnnotatedTypeFactory
             return IMMUTABLE;
         }
         if (type.getKind() == TypeKind.ARRAY) {
-            return RECEIVER_DEPENDANT_MUTABLE; // if decided to use vpa for array, return RDM.
+            return RECEIVER_DEPENDENT_MUTABLE; // if decided to use vpa for array, return RDM.
         }
 
         // IMMUTABLE for enum w/o decl anno
@@ -243,7 +243,7 @@ public class PICONoInitAnnotatedTypeFactory
                 if (!AnnotationUtils.containsSameByName(getDeclAnnotations(ele), MUTABLE)
                         && !AnnotationUtils.containsSameByName(
                                 getDeclAnnotations(ele),
-                                RECEIVER_DEPENDANT_MUTABLE)) { // no decl anno
+                        RECEIVER_DEPENDENT_MUTABLE)) { // no decl anno
                     return IMMUTABLE;
                 }
             }
@@ -257,7 +257,7 @@ public class PICONoInitAnnotatedTypeFactory
         // maybe just use getAnnotatedType
         // add default anno from class main qual, if no qual present
         AnnotatedTypeMirror fromTypeTree = super.getTypeOfExtendsImplements(clause);
-        if (fromTypeTree.hasAnnotation(RECEIVER_DEPENDANT_MUTABLE)) {
+        if (fromTypeTree.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
             AnnotatedTypeMirror enclosing =
                     getAnnotatedType(TreePathUtil.enclosingClass(getPath(clause)));
             AnnotationMirror mainBound = enclosing.getAnnotationInHierarchy(READONLY);
