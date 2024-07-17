@@ -4,10 +4,13 @@ import qual.Assignable;
 import qual.Immutable;
 
 public class InvalidAssignability {
+    int a;
+    @Assignable int b;
+    final int c;
+    // :: error: (one.assignability.invalid)
+    final @Assignable int d;
     final @Immutable Object io = null;
-    // :: error: (initialization.field.uninitialized)
     @Immutable Object io2;
-    // :: error: (initialization.field.uninitialized)
     @Assignable @Immutable Object io3;
     static final @Immutable Object io4 = null;
     // :: error: (initialization.static.field.uninitialized)
@@ -16,4 +19,9 @@ public class InvalidAssignability {
     final @Assignable @Immutable Object o = null;
     // :: error: (one.assignability.invalid)
     static final @Assignable @Immutable Object o2 = null;
+    // :: error: (initialization.fields.uninitialized)
+    InvalidAssignability() {
+        c = 1;
+        d = 1;
+    }
 }

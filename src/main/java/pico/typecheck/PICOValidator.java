@@ -78,6 +78,7 @@ public class PICOValidator extends BaseTypeValidator {
     @Override
     public Void visitPrimitive(AnnotatedPrimitiveType type, Tree tree) {
         checkImplicitlyImmutableTypeError(type, tree);
+        checkOnlyOneAssignabilityModifierOnField(tree);
         return super.visitPrimitive(type, tree);
     }
 
