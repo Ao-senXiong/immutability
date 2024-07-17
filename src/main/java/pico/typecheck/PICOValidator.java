@@ -15,17 +15,14 @@ import org.checkerframework.javacutil.*;
 import pico.common.PICOTypeUtil;
 import qual.Immutable;
 
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.VariableElement;
 
 import java.util.Objects;
-import java.util.Set;
 
 import static pico.typecheck.PICOAnnotationMirrorHolder.*;
 
 /**
- * Created by mier on 29/09/17.
  * Enforce correct usage of immutability and assignability qualifiers.
  * TODO @PolyMutable is only used on constructor/method parameters or method return
  */
@@ -41,7 +38,6 @@ public class PICOValidator extends BaseTypeValidator {
         checkOnlyOneAssignabilityModifierOnField(tree);
 
         return super.visitDeclared(type, tree);
-
     }
 
     @Override
