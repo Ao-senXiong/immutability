@@ -9,7 +9,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by mier on 06/10/17.
+ * This annotation is used to exclude the field from the abstract state and means the field can be reassigned after
+ * initialization. It should only annotate on field, not class or method.
  */
 
 @Documented
