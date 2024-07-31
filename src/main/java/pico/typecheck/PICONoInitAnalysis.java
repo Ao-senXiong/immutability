@@ -7,6 +7,10 @@ import org.checkerframework.javacutil.AnnotationMirrorSet;
 
 import javax.lang.model.type.TypeMirror;
 
+/**
+ * The analysis class for the immutability type system (serves as factory for the transfer function, stores and abstract
+ * values.
+ */
 public class PICONoInitAnalysis
         extends CFAbstractAnalysis<PICONoInitValue, PICONoInitStore, PICONoInitTransfer> {
 
