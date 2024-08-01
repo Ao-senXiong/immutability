@@ -360,6 +360,17 @@ public class PICOTypeUtil {
         return !isAssignableField(variableElement, provider) && !isFinalField(variableElement);
     }
 
+    /**
+     * Check if a field has one and only one assignability qualifier. Only the following combinations are valid:
+     *
+     * 1. Explicit @Assignable
+     * 2. Final field
+     * 3. @ReceiverDependentAssignable, where there is no explicit annotation in the source code
+     *
+     * @param field The field element
+     * @param provider The annotation provider
+     * @return true if the field has one and only one assignability qualifier
+     */
     public static boolean hasOneAndOnlyOneAssignabilityQualifier(VariableElement field, AnnotationProvider provider) {
         boolean valid = false;
         if (isAssignableField(field, provider) && !isFinalField(field) && !isReceiverDependantAssignable(field, provider)) {
