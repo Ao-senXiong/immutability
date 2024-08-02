@@ -34,9 +34,7 @@ import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.*;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -475,8 +473,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
     public void processClassTree(ClassTree node) {
         TypeElement typeElement = TreeUtils.elementFromDeclaration(node);
         // TODO Don't process anonymous class. I'm not even sure if whether
-        // processClassTree(ClassTree) is
-        // called on anonymous class tree
+        // processClassTree(ClassTree) is called on anonymous class tree
         if (typeElement.toString().contains("anonymous")) {
             super.processClassTree(node);
             return;
@@ -484,7 +481,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
 
         AnnotatedDeclaredType bound =
                 PICOTypeUtil.getBoundTypeOfTypeDeclaration(typeElement, atypeFactory);
-        // Has to be either @Mutable, @ReceiverDependentMutable or @Immutable, nothing else
+        // Class annotation has to be either @Mutable, @ReceiverDependentMutable or @Immutable
         if (!bound.hasAnnotation(MUTABLE)
                 && !bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
                 && !bound.hasAnnotation(IMMUTABLE)) {
