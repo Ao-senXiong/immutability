@@ -1,6 +1,5 @@
 package pico.typecheck;
 
-import org.checkerframework.checker.initialization.qual.Initialized;
 import org.checkerframework.framework.source.SourceChecker;
 import org.checkerframework.javacutil.AnnotationBuilder;
 import qual.Bottom;
@@ -24,7 +23,6 @@ public class PICOAnnotationMirrorHolder {
     public static AnnotationMirror RECEIVER_DEPENDENT_MUTABLE;
     public static AnnotationMirror IMMUTABLE;
     public static AnnotationMirror BOTTOM;
-    public static AnnotationMirror COMMITED;
 
     public static void init(SourceChecker checker) {
         Elements elements = checker.getElementUtils();
@@ -34,7 +32,5 @@ public class PICOAnnotationMirrorHolder {
         RECEIVER_DEPENDENT_MUTABLE = AnnotationBuilder.fromClass(elements, ReceiverDependentMutable.class);
         IMMUTABLE = AnnotationBuilder.fromClass(elements, Immutable.class);
         BOTTOM = AnnotationBuilder.fromClass(elements, Bottom.class);
-
-        COMMITED = AnnotationBuilder.fromClass(elements, Initialized.class);
     }
 }
