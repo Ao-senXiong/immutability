@@ -1,5 +1,6 @@
 package qual;
 
+import org.checkerframework.checker.initialization.qual.HoldsForDefaultValue;
 import org.checkerframework.framework.qual.DefaultFor;
 import org.checkerframework.framework.qual.QualifierForLiterals;
 import org.checkerframework.framework.qual.LiteralKind;
@@ -35,4 +36,5 @@ import java.math.BigInteger;
                 Character.class, Float.class, Integer.class, Long.class, Short.class, Number.class,
                 BigDecimal.class, BigInteger.class
         })
+@HoldsForDefaultValue
 public @interface Immutable {}

@@ -16,7 +16,6 @@ import java.util.Date;
  */
 public class AnnotationApplicationOrder {
     static Object o;// PICOTreeAnnotator takes care of static fields
-    // :: error: (initialization.field.uninitialized)
     BigDecimal decimal;// PICOImplicitsTypeAnnotator takes care of it
     Date date;// QualifierDefaults takes care of it
 }

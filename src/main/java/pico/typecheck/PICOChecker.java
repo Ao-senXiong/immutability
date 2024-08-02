@@ -1,6 +1,7 @@
 package pico.typecheck;
 
 import org.checkerframework.checker.initialization.InitializationChecker;
+import org.checkerframework.checker.initialization.InitializationVisitor;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 
 public class PICOChecker extends InitializationChecker {
@@ -31,5 +32,10 @@ public class PICOChecker extends InitializationChecker {
     @Override
     protected void shutdownHook() {
         super.shutdownHook();
+    }
+
+    @Override
+    protected InitializationVisitor createSourceVisitor() {
+        return new PICOInitializationVisitor(this);
     }
 }

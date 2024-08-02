@@ -13,6 +13,7 @@ public class RDMFieldInst{
     @Immutable
     private static class ImmutableClass {
         // :: error: (type.invalid.annotations.on.use)
+        // :: error: (initialization.field.uninitialized)
         @ReceiverDependentMutable MutableBox mutableBoxInRDM;
     }
 
@@ -28,7 +29,4 @@ public class RDMFieldInst{
         // :: error: (type.invalid.annotations.on.use)
         @ReceiverDependentMutable ImmutableBox immutableBoxInRDM = new ImmutableBox();
     }
-
-
-
 }
