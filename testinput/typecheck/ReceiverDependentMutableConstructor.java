@@ -54,7 +54,7 @@ public class ReceiverDependentMutableConstructor {
         // :: error: (argument.type.incompatible)
         new @Immutable ReceiverDependentMutableConstructor(po, io);
 
-        // :: error: (pico.new.invalid)
+        // :: error: (pico.new.invalid) :: error: (argument.type.incompatible) :: error: (constructor.invocation.invalid)
         new @Readonly ReceiverDependentMutableConstructor(ro, io);
     }
 }

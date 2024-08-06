@@ -91,7 +91,7 @@ class ObjectMethods4 {
 
     @Override
     protected Object clone(@Readonly ObjectMethods4 this) throws CloneNotSupportedException {
-        // :: warning: (cast.unsafe)
+        // :: warning: (cast.unsafe) :: error: (method.invocation.invalid)
         return (@Mutable Object) super.clone();
     }
 
@@ -118,7 +118,7 @@ class ObjectMethods5 {
 
     @Override
     protected @Immutable Object clone(@Readonly ObjectMethods5 this) throws CloneNotSupportedException {
-        // :: warning: (cast.unsafe)
+        // :: warning: (cast.unsafe) :: error: (method.invocation.invalid)
         return (@Immutable Object) super.clone();
     }
 
@@ -146,6 +146,7 @@ class ObjectMethods6 {
     @Override
     protected @ReceiverDependentMutable Object clone(@Readonly ObjectMethods6 this) throws CloneNotSupportedException {
         // No cast.unsafe
+        // :: error: (method.invocation.invalid)
         return (@ReceiverDependentMutable Object) super.clone();
     }
 

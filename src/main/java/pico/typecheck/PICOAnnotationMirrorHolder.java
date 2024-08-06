@@ -8,6 +8,7 @@ import qual.Mutable;
 import qual.PolyMutable;
 import qual.Readonly;
 import qual.ReceiverDependentMutable;
+import qual.Lost;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.util.Elements;
@@ -22,6 +23,7 @@ public class PICOAnnotationMirrorHolder {
     public static AnnotationMirror POLY_MUTABLE;
     public static AnnotationMirror RECEIVER_DEPENDENT_MUTABLE;
     public static AnnotationMirror IMMUTABLE;
+    public static AnnotationMirror LOST;
     public static AnnotationMirror BOTTOM;
 
     public static void init(SourceChecker checker) {
@@ -31,6 +33,7 @@ public class PICOAnnotationMirrorHolder {
         POLY_MUTABLE = AnnotationBuilder.fromClass(elements, PolyMutable.class);
         RECEIVER_DEPENDENT_MUTABLE = AnnotationBuilder.fromClass(elements, ReceiverDependentMutable.class);
         IMMUTABLE = AnnotationBuilder.fromClass(elements, Immutable.class);
+        LOST = AnnotationBuilder.fromClass(elements, Lost.class);
         BOTTOM = AnnotationBuilder.fromClass(elements, Bottom.class);
     }
 }

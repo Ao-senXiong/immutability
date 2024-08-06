@@ -43,6 +43,7 @@ import qual.Mutable;
 import qual.PolyMutable;
 import qual.Readonly;
 import qual.ReceiverDependentMutable;
+import qual.Lost;
 
 /**
  * AnnotatedTypeFactory for PICO. In addition to getting atms, it also propagates and applies
@@ -75,6 +76,7 @@ public class PICONoInitAnnotatedTypeFactory
                         PolyMutable.class,
                         ReceiverDependentMutable.class,
                         Immutable.class,
+                        Lost.class,
                         Bottom.class));
     }
 

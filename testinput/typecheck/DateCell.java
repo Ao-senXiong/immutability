@@ -39,6 +39,7 @@ import java.util.Date;
         // In receiver viewpoint adaptation:
         // q(this-cellGetHours) |> @PolyImmutable <: @Readonly => q(this-cellGetHours) <: @Readonly So cellGetHours is invocable on
         // any types of receiver. In inference, if we prefer top(@Readonly), it still infers current "this" to @Readonly.
+        // :: error: (method.invocation.invalid)
         @Readonly Date rd = this.getDate();
         int hour = rd.getHours();
     }

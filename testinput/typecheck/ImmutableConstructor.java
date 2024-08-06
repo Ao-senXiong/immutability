@@ -42,8 +42,8 @@ public class ImmutableConstructor {
         // constructor.invocation.invalid propgates before annotation invalid messages and stops
         // :: error: (constructor.invocation.invalid)
         new @ReceiverDependentMutable ImmutableConstructor(po, io);
-
-        // :: error: (constructor.invocation.invalid) :: error: (pico.new.invalid)
+        /// TODO: is too many error a good thing?
+        // :: error: (constructor.invocation.invalid) :: error: (pico.new.invalid) :: error: (argument.type.incompatible)
         new @Readonly ImmutableConstructor(ro, io);
     }
 }

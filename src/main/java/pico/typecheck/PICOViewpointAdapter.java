@@ -6,6 +6,7 @@ import static pico.typecheck.PICOAnnotationMirrorHolder.MUTABLE;
 import static pico.typecheck.PICOAnnotationMirrorHolder.POLY_MUTABLE;
 import static pico.typecheck.PICOAnnotationMirrorHolder.READONLY;
 import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDENT_MUTABLE;
+import static pico.typecheck.PICOAnnotationMirrorHolder.LOST;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -49,7 +50,12 @@ public class PICOViewpointAdapter extends AbstractViewpointAdapter {
         } else if (AnnotationUtils.areSame(declaredAnnotation, POLY_MUTABLE)) {
             return POLY_MUTABLE;
         } else if (AnnotationUtils.areSame(declaredAnnotation, RECEIVER_DEPENDENT_MUTABLE)) {
-            return receiverAnnotation;
+            // @Readonly |> @ReceiverDependentMutable = @Lost
+            if (AnnotationUtils.areSame(receiverAnnotation, READONLY)) {
+                return LOST;
+            } else {
+                return receiverAnnotation;
+            }
         } else {
             throw new BugInCF("Unknown declared modifier: " + declaredAnnotation);
         }

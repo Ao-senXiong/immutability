@@ -322,33 +322,32 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
     }
 
     private boolean allowWrite(AnnotatedTypeMirror receiverType, ExpressionTree variable) {
-        // One pico side, if only receiver is mutable, we allow assigning/reassigning. Because if
-        // the field
-        // is declared as final, Java compiler will catch that, and we couldn't have reached this
+        // One pico side, if the receiver is mutable, we allow assigning/reassigning. Because if
+        // the field is declared as final, Java compiler will catch that, and we couldn't have reached this
         // point
-        // If the receiver is mutable, we allow assigning/reassigning
-        //        } else if (TreeUtils.elementFromUse(variable)) {
-        //            // If the field is not initialized, we allow assigning/reassigning
-        //            return true;
-        if (PICOTypeUtil.isAssigningAssignableField(variable, atypeFactory)) {
-            return isAllowedAssignableField(receiverType, variable);
-        } else return receiverType.hasAnnotation(MUTABLE);
+        if (receiverType.hasAnnotation(MUTABLE)) {
+            return true;
+        } else if (PICOTypeUtil.isAssigningAssignableField(variable, atypeFactory)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    private boolean isAllowedAssignableField(
-            AnnotatedTypeMirror receiverType, ExpressionTree node) {
-        Element fieldElement = TreeUtils.elementFromUse(node);
-        AnnotationMirrorSet bounds =
-                atypeFactory.getTypeDeclarationBounds(TreeUtils.typeOf(node));
-        AnnotatedTypeMirror fieldType = atypeFactory.getAnnotatedType(fieldElement);
-        if (fieldElement == null) return false;
-        // Forbid the case that might break type soundness. See ForbidAssignmentCase.java:21
-        // the second and third predicates ensure that the field is actually rdm (since sometimes we
-        // replace implicitly mutable with rdm to protect transitive immutability).
-        return !(receiverType.hasAnnotation(READONLY)
-                && AnnotationUtils.containsSameByName(bounds, RECEIVER_DEPENDENT_MUTABLE)
-                && fieldType.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE));
-    }
+//    private boolean isAllowedAssignableField(
+//            AnnotatedTypeMirror receiverType, ExpressionTree node) {
+//        Element fieldElement = TreeUtils.elementFromUse(node);
+//        AnnotationMirrorSet bounds =
+//                atypeFactory.getTypeDeclarationBounds(TreeUtils.typeOf(node));
+//        AnnotatedTypeMirror fieldType = atypeFactory.getAnnotatedType(fieldElement);
+//        if (fieldElement == null) return false;
+//        // Forbid the case that might break type soundness. See ForbidAssignmentCase.java:21
+//        // the second and third predicates ensure that the field is actually rdm (since sometimes we
+//        // replace implicitly mutable with rdm to protect transitive immutability).
+//        return !(receiverType.hasAnnotation(READONLY)
+//                && AnnotationUtils.containsSameByName(bounds, RECEIVER_DEPENDENT_MUTABLE)
+//                && fieldType.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE));
+//    }
 
     private void reportFieldOrArrayWriteError(
             Tree node, ExpressionTree variable, AnnotatedTypeMirror receiverType) {
@@ -416,26 +415,31 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
     }
 
     @Override
-    public Void visitNewClass(NewClassTree node, Void p) {
-        checkNewInstanceCreation(node);
-        return super.visitNewClass(node, p);
+    public Void visitNewClass(NewClassTree tree, Void p) {
+        checkNewInstanceCreation(tree);
+        return super.visitNewClass(tree, p);
     }
 
     @Override
-    public Void visitNewArray(NewArrayTree node, Void p) {
-        checkNewInstanceCreation(node);
-        return super.visitNewArray(node, p);
+    public Void visitNewArray(NewArrayTree tree, Void p) {
+        checkNewInstanceCreation(tree);
+        return super.visitNewArray(tree, p);
     }
 
-    private void checkNewInstanceCreation(Tree node) {
-        // Ensure only @Mutable/@Immutable/@ReceiverDependentMutable/@PolyMutable are used on new
-        // instance creation
-        AnnotatedTypeMirror type = atypeFactory.getAnnotatedType(node);
+    /**
+     * Helper method to check the immutability type on new instance creation. Only @Immutable, @Mutable and
+     * @ReceiverDependentMutable are allowed.
+     *
+     * @param tree the tree to check
+     */
+    private void checkNewInstanceCreation(Tree tree) {
+        AnnotatedTypeMirror type = atypeFactory.getAnnotatedType(tree);
         if (!(type.hasAnnotation(IMMUTABLE)
                 || type.hasAnnotation(MUTABLE)
                 || type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
+                // TODO: allow poly_mutable creation or not?
                 || type.hasAnnotation(POLY_MUTABLE))) {
-            checker.reportError(node, "pico.new.invalid", type);
+            checker.reportError(tree, "pico.new.invalid", type);
         }
     }
 
