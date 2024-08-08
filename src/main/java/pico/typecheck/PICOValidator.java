@@ -11,7 +11,11 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedPrimitiveType;
-import org.checkerframework.javacutil.*;
+import org.checkerframework.javacutil.AnnotationMirrorSet;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TreePathUtil;
+import org.checkerframework.javacutil.TreeUtils;
 import pico.common.PICOTypeUtil;
 import qual.Immutable;
 
@@ -21,7 +25,10 @@ import javax.lang.model.type.TypeKind;
 
 import java.util.Objects;
 
-import static pico.typecheck.PICOAnnotationMirrorHolder.*;
+import static pico.typecheck.PICOAnnotationMirrorHolder.BOTTOM;
+import static pico.typecheck.PICOAnnotationMirrorHolder.IMMUTABLE;
+import static pico.typecheck.PICOAnnotationMirrorHolder.MUTABLE;
+import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDENT_MUTABLE;
 
 /**
  * Enforce correct usage of immutability and assignability qualifiers.

@@ -1,7 +1,5 @@
 package pico.typecheck;
 
-import static pico.typecheck.PICOAnnotationMirrorHolder.*;
-
 import com.sun.source.tree.BinaryTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.MethodTree;
@@ -16,17 +14,31 @@ import com.sun.source.util.TreePath;
 import org.checkerframework.checker.initialization.InitializationFieldAccessTreeAnnotator;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 import org.checkerframework.framework.qual.RelevantJavaTypes;
-import org.checkerframework.framework.type.*;
+import org.checkerframework.framework.type.AnnotatedTypeFactory;
+import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
+import org.checkerframework.framework.type.GenericAnnotatedTypeFactory;
+import org.checkerframework.framework.type.NoElementQualifierHierarchy;
+import org.checkerframework.framework.type.QualifierHierarchy;
+import org.checkerframework.framework.type.ViewpointAdapter;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.LiteralTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.PropagationTreeAnnotator;
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
-import org.checkerframework.framework.type.typeannotator.*;
-import org.checkerframework.javacutil.*;
+import org.checkerframework.framework.type.typeannotator.DefaultForTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.DefaultQualifierForUseTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.IrrelevantTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.PropagationTypeAnnotator;
+import org.checkerframework.framework.type.typeannotator.TypeAnnotator;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -36,6 +48,11 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
+import org.checkerframework.javacutil.AnnotationMirrorSet;
+import org.checkerframework.javacutil.AnnotationUtils;
+import org.checkerframework.javacutil.ElementUtils;
+import org.checkerframework.javacutil.TreePathUtil;
+import org.checkerframework.javacutil.TreeUtils;
 import pico.common.PICOTypeUtil;
 import qual.Bottom;
 import qual.Immutable;
@@ -44,6 +61,11 @@ import qual.PolyMutable;
 import qual.Readonly;
 import qual.ReceiverDependentMutable;
 import qual.Lost;
+
+import static pico.typecheck.PICOAnnotationMirrorHolder.IMMUTABLE;
+import static pico.typecheck.PICOAnnotationMirrorHolder.MUTABLE;
+import static pico.typecheck.PICOAnnotationMirrorHolder.READONLY;
+import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDENT_MUTABLE;
 
 /**
  * AnnotatedTypeFactory for PICO. In addition to getting atms, it also propagates and applies
