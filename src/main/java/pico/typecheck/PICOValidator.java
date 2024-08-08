@@ -17,6 +17,7 @@ import qual.Immutable;
 
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 
 import java.util.Objects;
 
@@ -65,7 +66,12 @@ public class PICOValidator extends BaseTypeValidator {
                 }
             }
         }
-        return super.shouldCheckTopLevelDeclaredOrPrimitiveType(type, tree);
+        // COPY from SUPER
+        if (type.getKind() != TypeKind.DECLARED && !type.getKind().isPrimitive()) {
+            return true;
+        }
+        // Do not call super because BaseTypeValidator will don't check local variable declaration
+        return !TreeUtils.isExpressionTree(tree) || TreeUtils.isTypeTree(tree);
     }
 
     @Override

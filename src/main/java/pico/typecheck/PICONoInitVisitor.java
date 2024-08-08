@@ -334,21 +334,6 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         }
     }
 
-//    private boolean isAllowedAssignableField(
-//            AnnotatedTypeMirror receiverType, ExpressionTree node) {
-//        Element fieldElement = TreeUtils.elementFromUse(node);
-//        AnnotationMirrorSet bounds =
-//                atypeFactory.getTypeDeclarationBounds(TreeUtils.typeOf(node));
-//        AnnotatedTypeMirror fieldType = atypeFactory.getAnnotatedType(fieldElement);
-//        if (fieldElement == null) return false;
-//        // Forbid the case that might break type soundness. See ForbidAssignmentCase.java:21
-//        // the second and third predicates ensure that the field is actually rdm (since sometimes we
-//        // replace implicitly mutable with rdm to protect transitive immutability).
-//        return !(receiverType.hasAnnotation(READONLY)
-//                && AnnotationUtils.containsSameByName(bounds, RECEIVER_DEPENDENT_MUTABLE)
-//                && fieldType.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE));
-//    }
-
     private void reportFieldOrArrayWriteError(
             Tree node, ExpressionTree variable, AnnotatedTypeMirror receiverType) {
         if (variable.getKind() == Kind.MEMBER_SELECT) {
@@ -375,43 +360,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
                 checker.reportError(node, "field.polymutable.forbidden", element);
             }
         }
-        // When to check:
-        // bound == Immutable, OR
-        // not FIELD, OR
-        // top anno not RDM
-        // TODO use base cf check methods
-        AnnotationMirror declAnno =
-                atypeFactory.getTypeDeclarationBoundForMutability(type.getUnderlyingType());
-        if ((declAnno != null && AnnotationUtils.areSameByName(declAnno, IMMUTABLE))
-                || element.getKind() != ElementKind.FIELD
-                || !type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
-            checkAndReportInvalidAnnotationOnUse(type, node);
-        }
         return super.visitVariable(node, p);
-    }
-
-    private void checkAndReportInvalidAnnotationOnUse(AnnotatedTypeMirror type, Tree tree) {
-        AnnotationMirror useAnno = type.getAnnotationInHierarchy(READONLY);
-        // FIXME rm after poly vp
-        if (useAnno != null && AnnotationUtils.areSame(useAnno, POLY_MUTABLE)) {
-            return;
-        }
-        if (useAnno != null
-                && !PICOTypeUtil.isImplicitlyImmutableType(type)
-                && type.getKind()
-                        != TypeKind.ARRAY) { // TODO: annotate the use instead of using this
-            AnnotationMirror defaultAnno = MUTABLE;
-            for (AnnotationMirror anno :
-                    atypeFactory.getTypeDeclarationBounds(type.getUnderlyingType())) {
-                if (atypeFactory.getQualifierHierarchy().isSubtypeQualifiersOnly(anno, READONLY)
-                        && !AnnotationUtils.areSame(anno, READONLY)) {
-                    defaultAnno = anno;
-                }
-            }
-            if (!isAdaptedSubtype(useAnno, defaultAnno)) {
-                checker.reportError(tree, "type.invalid.annotations.on.use", defaultAnno, useAnno);
-            }
-        }
     }
 
     @Override
