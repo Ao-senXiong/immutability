@@ -41,6 +41,7 @@ import java.util.Date;
         // any types of receiver. In inference, if we prefer top(@Readonly), it still infers current "this" to @Readonly.
         // :: error: (method.invocation.invalid)
         @Readonly Date rd = this.getDate();
+        // :: error: (method.invocation.invalid)
         int hour = rd.getHours();
     }
 
