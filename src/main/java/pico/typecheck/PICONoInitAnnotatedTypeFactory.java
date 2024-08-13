@@ -146,7 +146,7 @@ public class PICONoInitAnnotatedTypeFactory
 
     @Override
     public QualifierHierarchy createQualifierHierarchy() {
-        return new NoElementQualifierHierarchy(getSupportedTypeQualifiers(), elements, this);
+        return new PICOQualifierHierarchy(getSupportedTypeQualifiers(), elements, this);
     }
 
     @Override
