@@ -30,6 +30,7 @@ import org.checkerframework.framework.type.AnnotatedTypeFactory.ParameterizedExe
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclaredType;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
+import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedArrayType;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.util.AnnotatedTypes;
 
@@ -97,7 +98,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
     }
 
     @Override
-    public boolean isValidUse(AnnotatedTypeMirror.AnnotatedArrayType type, Tree tree) {
+    public boolean isValidUse(AnnotatedArrayType type, Tree tree) {
         // You don't need adapted subtype if the decl bound is guaranteed to be RDM.
         // That simply means that any use is valid except bottom.
         AnnotationMirror used = type.getAnnotationInHierarchy(READONLY);
@@ -288,14 +289,14 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         // getAnnotatedTypeLhs() to also use flow sensitive refinement, but came across with
         // "private access" problem
         // on field "computingAnnotatedTypeMirrorOfLHS"
-        checkMutation(node, variable);
+        checkAssignment(node, variable);
         return super.visitAssignment(node, p);
     }
 
     @Override
     public Void visitCompoundAssignment(CompoundAssignmentTree node, Void p) {
         ExpressionTree variable = node.getVariable();
-        checkMutation(node, variable);
+        checkAssignment(node, variable);
         return super.visitCompoundAssignment(node, p);
     }
 
@@ -303,12 +304,20 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
     public Void visitUnary(UnaryTree node, Void p) {
         if (PICOTypeUtil.isSideEffectingUnaryTree(node)) {
             ExpressionTree variable = node.getExpression();
-            checkMutation(node, variable);
+            checkAssignment(node, variable);
         }
         return super.visitUnary(node, p);
     }
 
-    private void checkMutation(Tree node, ExpressionTree variable) {
+
+    /**
+     * Check if the assignment is valid. Assignment is not checked if it's in initializer block or if it happens in the
+     * constructor.
+     *
+     * @param tree the assignment node
+     * @param variable the variable in the assignment
+     */
+    private void checkAssignment(Tree tree, ExpressionTree variable) {
         AnnotatedTypeMirror receiverType = atypeFactory.getReceiverType(variable);
         MethodTree enclosingMethod = TreePathUtil.enclosingMethod(getCurrentPath());
         if (enclosingMethod != null && TreeUtils.isConstructor(enclosingMethod)) {
@@ -323,10 +332,18 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         // field assignment or not. Because for field assignment with implicit "this", receiverTree
         // is null but receiverType is non-null. We still need to check this case.
         if (receiverType != null && !allowWrite(receiverType, variable)) {
-            reportFieldOrArrayWriteError(node, variable, receiverType);
+            reportFieldOrArrayWriteError(tree, variable, receiverType);
         }
     }
 
+    /**
+     * Helper method to check if the receiver type allows writing. The receiver type must be mutable or the field is
+     * assignable. If not, return false.
+     *
+     * @param receiverType the receiver type
+     * @param variable the variable in the assignment
+     * @return true if the receiver type allows writing, false otherwise
+     */
     private boolean allowWrite(AnnotatedTypeMirror receiverType, ExpressionTree variable) {
         // One pico side, if the receiver is mutable, we allow assigning/reassigning. Because if
         // the field is declared as final, Java compiler will catch that, and we couldn't have reached this
@@ -340,20 +357,27 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         }
     }
 
+    /**
+     * Helper method to report field or array write error.
+     *
+     * @param tree the node to report the error
+     * @param variable the variable in the assignment
+     * @param receiverType the receiver type
+     */
     private void reportFieldOrArrayWriteError(
-            Tree node, ExpressionTree variable, AnnotatedTypeMirror receiverType) {
+            Tree tree, ExpressionTree variable, AnnotatedTypeMirror receiverType) {
         if (variable.getKind() == Kind.MEMBER_SELECT) {
             checker.reportError(
                     TreeUtils.getReceiverTree(variable), "illegal.field.write", receiverType);
         } else if (variable.getKind() == Kind.IDENTIFIER) {
-            checker.reportError(node, "illegal.field.write", receiverType);
+            checker.reportError(tree, "illegal.field.write", receiverType);
         } else if (variable.getKind() == Kind.ARRAY_ACCESS) {
             checker.reportError(
                     ((ArrayAccessTree) variable).getExpression(),
                     "illegal.array.write",
                     receiverType);
         } else {
-            throw new BugInCF("Unknown assignment variable at: ", node);
+            throw new BugInCF("Unknown assignment variable at: ", tree);
         }
     }
 
