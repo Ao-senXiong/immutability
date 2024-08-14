@@ -350,11 +350,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         // point
         if (receiverType.hasAnnotation(MUTABLE)) {
             return true;
-        } else if (PICOTypeUtil.isAssigningAssignableField(variable, atypeFactory)) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return PICOTypeUtil.isAssigningAssignableField(variable, atypeFactory);
     }
 
     /**

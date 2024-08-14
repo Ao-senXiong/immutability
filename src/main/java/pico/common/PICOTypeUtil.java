@@ -97,9 +97,7 @@ public class PICOTypeUtil {
 
     /**
      * Returns the bound of type declaration enclosing the node.
-     *
      * If no annotation exists on type declaration, bound is defaulted to @Mutable instead of having empty annotations.
-     *
      * This method simply gets/defaults annotation on bounds of classes, but
      * doesn't validate the correctness of the annotation. They are validated in {@link PICOVisitor#processClassTree(ClassTree)}
      * method.
@@ -110,12 +108,10 @@ public class PICOTypeUtil {
      */
     public static AnnotatedDeclaredType getBoundTypeOfEnclosingTypeDeclaration(Tree node, AnnotatedTypeFactory atypeFactory) {
         TypeElement typeElement = null;
-        if (node instanceof MethodTree) {
-            MethodTree methodTree = (MethodTree) node;
+        if (node instanceof MethodTree methodTree) {
             ExecutableElement element = TreeUtils.elementFromDeclaration(methodTree);
             typeElement = ElementUtils.enclosingTypeElement(element);
-        } else if(node instanceof VariableTree) {
-            VariableTree variableTree = (VariableTree) node;
+        } else if(node instanceof VariableTree variableTree) {
             VariableElement variableElement = TreeUtils.elementFromDeclaration(variableTree);
             assert variableElement!= null && variableElement.getKind().isField();
             typeElement = ElementUtils.enclosingTypeElement(variableElement);
@@ -243,8 +239,7 @@ public class PICOTypeUtil {
            } else {
                AnnotatedTypeMirror explicitATM = annotatedTypeFactory.fromElement(element);
                if (!explicitATM.hasAnnotationInHierarchy(READONLY)) {
-                   if (explicitATM instanceof AnnotatedDeclaredType) {
-                       AnnotatedDeclaredType adt = (AnnotatedDeclaredType) explicitATM;
+                   if (explicitATM instanceof AnnotatedDeclaredType adt) {
                        Element typeElement = adt.getUnderlyingType().asElement();
 
                        // add RDM if bound=M and enclosingBound=M/RDM
