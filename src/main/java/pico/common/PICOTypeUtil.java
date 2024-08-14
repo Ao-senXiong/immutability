@@ -108,10 +108,12 @@ public class PICOTypeUtil {
      */
     public static AnnotatedDeclaredType getBoundTypeOfEnclosingTypeDeclaration(Tree node, AnnotatedTypeFactory atypeFactory) {
         TypeElement typeElement = null;
-        if (node instanceof MethodTree methodTree) {
+        if (node instanceof MethodTree) {
+            MethodTree methodTree = (MethodTree) node;
             ExecutableElement element = TreeUtils.elementFromDeclaration(methodTree);
             typeElement = ElementUtils.enclosingTypeElement(element);
-        } else if(node instanceof VariableTree variableTree) {
+        } else if(node instanceof VariableTree) {
+            VariableTree variableTree = (VariableTree) node;
             VariableElement variableElement = TreeUtils.elementFromDeclaration(variableTree);
             assert variableElement!= null && variableElement.getKind().isField();
             typeElement = ElementUtils.enclosingTypeElement(variableElement);
@@ -239,7 +241,8 @@ public class PICOTypeUtil {
            } else {
                AnnotatedTypeMirror explicitATM = annotatedTypeFactory.fromElement(element);
                if (!explicitATM.hasAnnotationInHierarchy(READONLY)) {
-                   if (explicitATM instanceof AnnotatedDeclaredType adt) {
+                   if (explicitATM instanceof AnnotatedDeclaredType) {
+                       AnnotatedDeclaredType adt = (AnnotatedDeclaredType) explicitATM;
                        Element typeElement = adt.getUnderlyingType().asElement();
 
                        // add RDM if bound=M and enclosingBound=M/RDM
