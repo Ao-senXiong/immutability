@@ -95,6 +95,12 @@ public class PICOValidator extends BaseTypeValidator {
         return super.visitPrimitive(type, tree);
     }
 
+    /**
+     * Check that static fields do not have receiver-dependent mutable type.
+     *
+     * @param type the type to check
+     * @param tree the tree to check
+     */
     private void checkStaticReceiverDependentMutableError(AnnotatedTypeMirror type, Tree tree) {
         if (!type.isDeclaration()  // variables in static contexts and static fields use class decl as enclosing type
                 && PICOTypeUtil.inStaticScope(visitor.getCurrentPath())
@@ -104,16 +110,25 @@ public class PICOValidator extends BaseTypeValidator {
         }
     }
 
-    /**Check that implicitly immutable type has immutable or bottom type. Dataflow might refine immutable type to
-     * {@code @Bottom} (see RefineFromNull.java),
-     * so we accept @Bottom as a valid qualifier for implicitly immutable types*/
+    /**
+     * Check that implicitly immutable type has immutable or bottom type. Dataflow might refine immutable type to
+     * {@code @Bottom} (see RefineFromNull.java), so we accept @Bottom as a valid qualifier for implicitly immutable
+     * types.
+     *
+     * @param type the type to check
+     * @param tree the tree to check
+     */
     private void checkImplicitlyImmutableTypeError(AnnotatedTypeMirror type, Tree tree) {
         if (PICOTypeUtil.isImplicitlyImmutableType(type) && !type.hasAnnotation(IMMUTABLE) && !type.hasAnnotation(BOTTOM)) {
             reportInvalidAnnotationsOnUse(type, tree);
         }
     }
 
-    /**Ensures the well-formdness in terms of assignability on a field. This covers both instance fields and static fields.*/
+    /**
+     * Ensures the well-formdness in terms of assignability on a field. This covers both instance fields and static fields.
+     *
+     * @param tree the tree to check
+     */
     private void checkOnlyOneAssignabilityModifierOnField(Tree tree) {
         if (tree.getKind() == Kind.VARIABLE) {
             VariableTree variableTree = (VariableTree) tree;

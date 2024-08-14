@@ -334,7 +334,13 @@ public class PICOTypeUtil {
         return ElementUtils.isFinal(variableElement);
     }
 
-    /**Check if a field is assignable or not.*/
+    /**
+     * Check if a field is assignable. A field is assignable if it is static and not final, or has explicit @Assignable
+     *
+     * @param variableElement The field element
+     * @param provider The annotation provider
+     * @return true if the field is assignable
+     */
     public static boolean isAssignableField(Element variableElement, AnnotationProvider provider) {
         if (!(variableElement instanceof VariableElement)) {  // FIXME consider rm
             return false;
@@ -350,7 +356,13 @@ public class PICOTypeUtil {
         }
     }
 
-    /**Check if a field is @ReceiverDependantAssignable. Static fields always returns false.*/
+    /**
+     * Check if a field is @ReceiverDependantAssignable. Static fields always returns false.
+     *
+     * @param variableElement The field element
+     * @param provider The annotation provider
+     * @return true if the field is @ReceiverDependantAssignable
+     */
     public static boolean isReceiverDependantAssignable(Element variableElement, AnnotationProvider provider) {
         assert variableElement instanceof VariableElement;
         if (ElementUtils.isStatic(variableElement)) {
@@ -384,8 +396,15 @@ public class PICOTypeUtil {
         return valid;
     }
 
-    public static boolean isAssigningAssignableField(ExpressionTree node, AnnotationProvider provider) {
-        Element fieldElement = TreeUtils.elementFromUse(node);
+    /**
+     * Check if a field is a field that can be assigned to. A field is assignable if it is static and not final, or has explicit @Assignable
+     *
+     * @param tree The tree of the field
+     * @param provider The annotation provider
+     * @return true if the field is assignable
+     */
+    public static boolean isAssigningAssignableField(ExpressionTree tree, AnnotationProvider provider) {
+        Element fieldElement = TreeUtils.elementFromUse(tree);
         if (fieldElement == null) return false;
         return isAssignableField(fieldElement, provider);
     }

@@ -18,7 +18,6 @@ import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.type.GenericAnnotatedTypeFactory;
-import org.checkerframework.framework.type.NoElementQualifierHierarchy;
 import org.checkerframework.framework.type.QualifierHierarchy;
 import org.checkerframework.framework.type.ViewpointAdapter;
 import org.checkerframework.framework.type.treeannotator.ListTreeAnnotator;
@@ -136,8 +135,7 @@ public class PICONoInitAnnotatedTypeFactory
         /*Copied code ends*/
         // Adding order is important here. Because internally type annotators are using
         // addMissingAnnotations() method, so if one annotator already applied the annotations, the
-        // others won't apply twice
-        // at the same location
+        // others won't apply twice at the same location
         typeAnnotators.add(new PICOTypeAnnotator(this));
         typeAnnotators.add(new PICODefaultForTypeAnnotator(this));
         typeAnnotators.add(new PICOEnumDefaultAnnotator(this));
