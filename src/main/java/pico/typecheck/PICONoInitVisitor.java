@@ -56,9 +56,12 @@ import pico.common.PICOTypeUtil;
 import qual.Immutable;
 
 public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFactory> {
+    /** whether to only check observational purity */
+    protected final boolean abstractStateOnly;
 
     public PICONoInitVisitor(BaseTypeChecker checker) {
         super(checker);
+        abstractStateOnly = checker.hasOption("abstractStateOnly");
     }
 
     @Override
@@ -229,9 +232,11 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         flexibleOverrideChecker(node);
 
         // ObjectIdentityMethod check
-        if (PICOTypeUtil.isObjectIdentityMethod(node, atypeFactory)) {
-            ObjectIdentityMethodEnforcer.check(
-                    atypeFactory.getPath(node.getBody()), atypeFactory, checker);
+        if(abstractStateOnly) {
+            if (PICOTypeUtil.isObjectIdentityMethod(node, atypeFactory)) {
+                ObjectIdentityMethodEnforcer.check(
+                        atypeFactory.getPath(node.getBody()), atypeFactory, checker);
+            }
         }
         return super.visitMethod(node, p);
     }

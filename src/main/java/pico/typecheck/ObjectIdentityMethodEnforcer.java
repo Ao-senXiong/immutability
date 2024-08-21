@@ -98,7 +98,6 @@ public class ObjectIdentityMethodEnforcer extends TreePathScanner<Void, Void> {
         } else if (AnnotatedTypes.containsModifier(typeFactory.getAnnotatedType(elt), READONLY)) {
             in = false;
         }
-
         return in;
     }
 }

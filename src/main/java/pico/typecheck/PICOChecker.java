@@ -4,6 +4,9 @@ import org.checkerframework.checker.initialization.InitializationChecker;
 import org.checkerframework.checker.initialization.InitializationVisitor;
 import org.checkerframework.common.basetype.BaseTypeChecker;
 
+import javax.annotation.processing.SupportedOptions;
+
+@SupportedOptions({"abstractStateOnly"})
 public class PICOChecker extends InitializationChecker {
 
     public PICOChecker() {}
