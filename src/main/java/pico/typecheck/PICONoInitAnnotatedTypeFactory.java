@@ -1,19 +1,10 @@
 package pico.typecheck;
 
-import com.sun.source.tree.BinaryTree;
-import com.sun.source.tree.IdentifierTree;
-import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.NewArrayTree;
-import com.sun.source.tree.NewClassTree;
-import com.sun.source.tree.ParameterizedTypeTree;
-import com.sun.source.tree.Tree;
-import com.sun.source.tree.TypeCastTree;
-import com.sun.source.tree.VariableTree;
+import com.sun.source.tree.*;
 import com.sun.source.util.TreePath;
 
 import org.checkerframework.checker.initialization.InitializationFieldAccessTreeAnnotator;
 import org.checkerframework.common.basetype.BaseTypeChecker;
-import org.checkerframework.framework.qual.RelevantJavaTypes;
 import org.checkerframework.framework.type.AnnotatedTypeFactory;
 import org.checkerframework.framework.type.AnnotatedTypeMirror;
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
@@ -26,9 +17,7 @@ import org.checkerframework.framework.type.treeannotator.PropagationTreeAnnotato
 import org.checkerframework.framework.type.treeannotator.TreeAnnotator;
 import org.checkerframework.framework.type.typeannotator.DefaultForTypeAnnotator;
 import org.checkerframework.framework.type.typeannotator.DefaultQualifierForUseTypeAnnotator;
-import org.checkerframework.framework.type.typeannotator.IrrelevantTypeAnnotator;
 import org.checkerframework.framework.type.typeannotator.ListTypeAnnotator;
-import org.checkerframework.framework.type.typeannotator.PropagationTypeAnnotator;
 import org.checkerframework.framework.type.typeannotator.TypeAnnotator;
 
 import java.lang.annotation.Annotation;
@@ -74,8 +63,7 @@ import static pico.typecheck.PICOAnnotationMirrorHolder.RECEIVER_DEPENDENT_MUTAB
  * implementation.
  */
 // TODO Use @Immutable for classes that extends those predefined immutable classess like String or
-// Number
-// and explicitly annotated classes with @Immutable on its declaration
+// Number and explicitly annotated classes with @Immutable on its declaration
 public class PICONoInitAnnotatedTypeFactory
         extends GenericAnnotatedTypeFactory<
                 PICONoInitValue, PICONoInitStore, PICONoInitTransfer, PICONoInitAnalysis> {
@@ -264,10 +252,16 @@ public class PICONoInitAnnotatedTypeFactory
         // add default anno from class main qual, if no qual present
         AnnotatedTypeMirror fromTypeTree = super.getTypeOfExtendsImplements(clause);
         if (fromTypeTree.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
-            AnnotatedTypeMirror enclosing =
-                    getAnnotatedType(TreePathUtil.enclosingClass(getPath(clause)));
-            AnnotationMirror mainBound = enclosing.getAnnotationInHierarchy(READONLY);
-            fromTypeTree.replaceAnnotation(mainBound);
+            ClassTree enclosingClass = TreePathUtil.enclosingClass(getPath(clause));
+            //TODO This is a hack but fixed a few crash errors, look what will be the overall solution.
+            if (enclosingClass == null) {
+                return fromTypeTree;
+            } else {
+                AnnotatedTypeMirror enclosing =
+                        getAnnotatedType(enclosingClass);
+                AnnotationMirror mainBound = enclosing.getAnnotationInHierarchy(READONLY);
+                fromTypeTree.replaceAnnotation(mainBound);
+            }
         }
         return fromTypeTree;
     }
