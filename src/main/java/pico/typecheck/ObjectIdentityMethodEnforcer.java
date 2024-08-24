@@ -50,7 +50,7 @@ public class ObjectIdentityMethodEnforcer extends TreePathScanner<Void, Void> {
             return;// Doesn't check static method invocation because it doesn't access instance field
         }
         if (!PICOTypeUtil.isObjectIdentityMethod((ExecutableElement) elt, typeFactory)) {
-            // Report warning since invoked method is not only dependant on abstract state fields, but we
+            // Report warning since invoked method is not only dependent on abstract state fields, but we
             // don't know whether this method invocation's result flows into the hashcode or not.
             checker.reportWarning(node, "object.identity.method.invocation.invalid", elt);
         }
