@@ -83,9 +83,8 @@ public class PICONoInitAnnotatedTypeFactory
     public PICONoInitAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker);
         postInit();
-        // PICO aliasing is not implemented correctly
-        // remove for now
-        //        addAliasedAnnotation(org.jmlspecs.annotation.Readonly.class, READONLY);
+        // PICO aliasing is not implemented correctly remove for now
+        // addAliasedAnnotation(org.jmlspecs.annotation.Readonly.class, READONLY);
     }
 
     @Override
@@ -118,28 +117,13 @@ public class PICONoInitAnnotatedTypeFactory
         return new ListTreeAnnotator(annotators);
     }
 
-    // TODO Refactor super class to remove this duplicate code
     @Override
     protected TypeAnnotator createTypeAnnotator() {
-        /*Copied code start*/
-        List<TypeAnnotator> typeAnnotators = new ArrayList<>();
-        RelevantJavaTypes relevantJavaTypes =
-                checker.getClass().getAnnotation(RelevantJavaTypes.class);
-        if (relevantJavaTypes != null) {
-            //            Class<?>[] classes = relevantJavaTypes.value();
-            // Must be first in order to annotated all irrelevant types that are not explicilty
-            // annotated.
-            typeAnnotators.add(new IrrelevantTypeAnnotator(this));
-        }
-        typeAnnotators.add(new PropagationTypeAnnotator(this));
-        /*Copied code ends*/
         // Adding order is important here. Because internally type annotators are using
         // addMissingAnnotations() method, so if one annotator already applied the annotations, the
         // others won't apply twice at the same location
-        typeAnnotators.add(new PICOTypeAnnotator(this));
-        typeAnnotators.add(new PICODefaultForTypeAnnotator(this));
-        typeAnnotators.add(new PICOEnumDefaultAnnotator(this));
-        return new ListTypeAnnotator(typeAnnotators);
+        return new ListTypeAnnotator(
+                super.createTypeAnnotator(), new PICOTypeAnnotator(this), new PICODefaultForTypeAnnotator(this), new PICOEnumDefaultAnnotator(this));
     }
 
     @Override
