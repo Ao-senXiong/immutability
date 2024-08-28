@@ -35,6 +35,7 @@ public class PICOInitializationAnnotatedTypeFactory extends InitializationAnnota
      */
     public PICOInitializationAnnotatedTypeFactory(BaseTypeChecker checker) {
         super(checker);
+        postInit();
     }
 
     /**
