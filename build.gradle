@@ -1,5 +1,3 @@
-/// Why doesn't this work on Travis under Java 7?
-/// The same text does in Randoop's build.gradle file.
 plugins {
     // Plugin that applies Google-Java-format to the Java files in the project.
     // https://github.com/sherter/google-java-format-gradle-plugin
@@ -88,6 +86,10 @@ compileJava {
 }
 
 afterEvaluate {
+    tasks.withType(JavaCompile) { compilationTask ->
+        sourceCompatibility = 8
+        targetCompatibility = 8
+    }
     // Create a task for each JUnit test class whose name is the same as the JUnit class name.
     sourceSets.test.allJava.filter { it.path.contains("${picoPath}/src/test/java") }.forEach { file ->
         String junitClassName = file.name.replaceAll(".java", "")
