@@ -1,11 +1,19 @@
-import qual.Mutable;
-import qual.Immutable;
-import qual.ReceiverDependentMutable;
-import qual.Readonly;
-import qual.ObjectIdentityMethod;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Readonly;
+import org.checkerframework.checker.pico.qual.ObjectIdentityMethod;
 import java.util.Collection;
 
 package java.lang;
+
+class AssertionError {
+  AssertionError(@Readonly Object var0);
+}
+
+class RuntimeException {
+  RuntimeException(String var0, Throwable var1);
+}
 
 @ReceiverDependentMutable
 class Object {
@@ -189,7 +197,7 @@ interface Map<K extends @Immutable Object, V> {
   boolean isEmpty(@Readonly Map<K, V> this);
   boolean containsKey(@Readonly Map<K, V> this, @Readonly Object var1);
   boolean containsValue(@Readonly Map<K, V> this, @Readonly Object value);
-  V get(@Readonly Map<K, V> this, @Readonly Object var1);
+  V get(@Readonly Map<K, V> this, Object var1);
   V remove(@Readonly Object key);
   void putAll(@Readonly Map<? extends K, ? extends V> m);
   Set<K> keySet(@Readonly Map<K, V> this);
@@ -261,6 +269,11 @@ class Pattern {
   String[] split(@Readonly CharSequence input);
   static final int countChars(@Readonly CharSequence seq, int index, int lengthInCodePoints);
   static final int countCodePoints(@Readonly CharSequence seq);
+}
+
+package java.util.concurrent;
+class ExecutionException {
+  ExecutionException(@Readonly Throwable var0);
 }
 
 package java.io;

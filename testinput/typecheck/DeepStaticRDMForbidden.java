@@ -1,4 +1,4 @@
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 public class DeepStaticRDMForbidden {
 

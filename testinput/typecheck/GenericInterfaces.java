@@ -1,6 +1,6 @@
-import qual.Immutable;
-import qual.Mutable;
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 interface MIt<E extends @Readonly Object> {
     E next();

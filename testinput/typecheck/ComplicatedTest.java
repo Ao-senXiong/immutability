@@ -1,9 +1,9 @@
 package typecheck;
 
-import qual.Immutable;
-import qual.Mutable;
-import qual.ReceiverDependentMutable;
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Readonly;
 import java.util.ArrayList;
 
 @ReceiverDependentMutable

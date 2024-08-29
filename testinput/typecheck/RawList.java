@@ -1,5 +1,5 @@
 import org.checkerframework.checker.nullness.qual.NonNull;
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 import java.util.AbstractList;
 

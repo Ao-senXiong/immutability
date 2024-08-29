@@ -1,9 +1,9 @@
 package typecheck;
 
-import qual.Immutable;
-import qual.Mutable;
-import qual.Assignable;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Assignable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 import java.util.Date;
 

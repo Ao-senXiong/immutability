@@ -1,6 +1,6 @@
-import qual.Immutable;
-import qual.Mutable;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 public class ConstructorInvocationUsingNew {
 

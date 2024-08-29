@@ -1,6 +1,6 @@
 package typecheck;
 
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 public class ReadonlyConstructor {
     //TODO: should we check the return type of constructor?

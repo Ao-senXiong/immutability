@@ -1,5 +1,5 @@
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 public class FieldAssignCase2_3 {
     @ReceiverDependentMutable Object o;

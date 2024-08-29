@@ -1,4 +1,4 @@
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 // https://github.com/typetools/annotation-tools/issues/144
 // TODO https://github.com/opprop/checker-framework-inference/issues/109

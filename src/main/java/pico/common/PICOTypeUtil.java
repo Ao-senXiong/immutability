@@ -24,9 +24,9 @@ import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedDeclared
 import org.checkerframework.framework.type.AnnotatedTypeMirror.AnnotatedExecutableType;
 import org.checkerframework.framework.util.AnnotatedTypes;
 import org.checkerframework.javacutil.*;
-import qual.Assignable;
-import qual.Immutable;
-import qual.ObjectIdentityMethod;
+import org.checkerframework.checker.pico.qual.Assignable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.ObjectIdentityMethod;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;

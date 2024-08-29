@@ -1,5 +1,5 @@
-import qual.Mutable;
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 // Copied from typechecking side testcase. AFU bug causes @Immutable is not inserted
 // back to class A's declaration position, but it is inferred as result - @Immutable.

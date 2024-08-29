@@ -1,6 +1,6 @@
 import java.util.Arrays;
 import java.util.Comparator;
-import qual.*;
+import org.checkerframework.checker.pico.qual.*;
 
 public class StrangeReadonly {
     @SuppressWarnings("unchecked")

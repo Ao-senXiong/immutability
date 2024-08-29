@@ -1,6 +1,6 @@
 package typecheck;
 
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 public class BinaryOperator {
     @Readonly Object o;

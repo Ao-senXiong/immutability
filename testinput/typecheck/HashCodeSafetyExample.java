@@ -1,5 +1,5 @@
-import qual.Assignable;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Assignable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 import java.util.HashMap;
 import java.util.Map;

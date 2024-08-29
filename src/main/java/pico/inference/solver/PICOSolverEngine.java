@@ -5,7 +5,7 @@ import checkers.inference.solver.backend.SolverFactory;
 import checkers.inference.solver.backend.maxsat.MaxSatFormatTranslator;
 import checkers.inference.solver.backend.maxsat.MaxSatSolverFactory;
 import checkers.inference.solver.frontend.Lattice;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 import javax.lang.model.element.AnnotationMirror;
 

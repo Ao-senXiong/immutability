@@ -1,4 +1,4 @@
-package qual;
+package org.checkerframework.checker.pico.qual;
 
 
 import org.checkerframework.checker.initialization.qual.HoldsForDefaultValue;

@@ -17,7 +17,7 @@ import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreePathUtil;
 import org.checkerframework.javacutil.TreeUtils;
 import pico.common.PICOTypeUtil;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.VariableElement;

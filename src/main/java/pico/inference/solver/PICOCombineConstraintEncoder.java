@@ -10,7 +10,7 @@ import checkers.inference.solver.backend.maxsat.encoder.MaxSATAbstractConstraint
 import checkers.inference.solver.frontend.Lattice;
 import org.checkerframework.javacutil.AnnotationUtils;
 import org.sat4j.core.VecInt;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 import javax.lang.model.element.AnnotationMirror;
 import java.util.ArrayList;

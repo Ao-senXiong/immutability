@@ -2,8 +2,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.checkerframework.checker.initialization.qual.NotOnlyInitialized;
-import qual.Immutable;
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 import java.util.ArrayList;
 

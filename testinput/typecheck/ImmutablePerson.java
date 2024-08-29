@@ -2,7 +2,7 @@ package typecheck;
 
 import java.util.*;
 
-import qual.*;
+import org.checkerframework.checker.pico.qual.*;
 
 class ImmutablePerson {
 

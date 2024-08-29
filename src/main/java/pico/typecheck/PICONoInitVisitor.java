@@ -53,7 +53,7 @@ import org.checkerframework.javacutil.TreePathUtil;
 import org.checkerframework.javacutil.TreeUtils;
 import org.checkerframework.javacutil.TypesUtils;
 import pico.common.PICOTypeUtil;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFactory> {
     /** whether to only check observational purity */

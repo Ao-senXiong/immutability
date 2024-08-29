@@ -1,4 +1,4 @@
-import qual.Mutable;
+import org.checkerframework.checker.pico.qual.Mutable;
 
 public class LUBNoSubtypeConForImmutableType {
 

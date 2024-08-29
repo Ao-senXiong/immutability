@@ -1,7 +1,7 @@
 package typecheck;
 
-import qual.Mutable;
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 class A {
     void foo(@Readonly Object o) {}

@@ -2,8 +2,8 @@ package pico.typecheck;
 
 import org.checkerframework.framework.type.GenericAnnotatedTypeFactory;
 import org.checkerframework.framework.type.NoElementQualifierHierarchy;
-import qual.Bottom;
-import qual.Lost;
+import org.checkerframework.checker.pico.qual.Bottom;
+import org.checkerframework.checker.pico.qual.Lost;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.util.Elements;

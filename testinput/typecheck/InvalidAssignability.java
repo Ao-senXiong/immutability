@@ -1,7 +1,7 @@
 package typecheck;
 
-import qual.Assignable;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Assignable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 public class InvalidAssignability {
     int a;

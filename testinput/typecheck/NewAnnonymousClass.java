@@ -1,5 +1,5 @@
-import qual.Immutable;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 import java.util.Date;
 

@@ -1,8 +1,8 @@
 package typecheck;
 
-import qual.Readonly;
-import qual.Mutable;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Readonly;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 public class OnlyOneModifierIsUse {
 

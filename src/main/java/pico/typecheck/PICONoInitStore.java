@@ -3,7 +3,7 @@ package pico.typecheck;
 import org.checkerframework.dataflow.expression.FieldAccess;
 import org.checkerframework.framework.flow.CFAbstractAnalysis;
 import org.checkerframework.framework.flow.CFAbstractStore;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 import java.util.Map;
 

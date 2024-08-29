@@ -1,4 +1,4 @@
-import qual.*;
+import org.checkerframework.checker.pico.qual.*;
 
 @ReceiverDependentMutable
 class A {

@@ -1,4 +1,4 @@
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 @Immutable
 public class DeepRDMDefaultForInstanceField {

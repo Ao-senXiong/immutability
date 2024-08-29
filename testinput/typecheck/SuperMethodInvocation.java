@@ -1,9 +1,9 @@
 package typecheck;
 
-import qual.Immutable;
-import qual.Mutable;
-import qual.Readonly;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Readonly;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 @ReceiverDependentMutable
 public class SuperMethodInvocation {

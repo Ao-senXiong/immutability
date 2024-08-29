@@ -1,4 +1,4 @@
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 class A extends Throwable {
     @Override

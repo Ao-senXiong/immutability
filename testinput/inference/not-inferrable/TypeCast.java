@@ -1,4 +1,4 @@
-import qual.Mutable;
+import org.checkerframework.checker.pico.qual.Mutable;
 
 // https://github.com/topnessman/immutability-example/blob/master/meeting/2017_11.9_Meeting.txt
 public class TypeCast {

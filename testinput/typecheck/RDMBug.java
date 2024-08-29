@@ -1,9 +1,9 @@
 package typecheck;
 
-import qual.Assignable;
-import qual.Immutable;
-import qual.Mutable;
-import qual.Readonly;
+import org.checkerframework.checker.pico.qual.Assignable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Readonly;
 
 @Immutable class RDMBug {
     // :: error: (initialization.field.uninitialized)

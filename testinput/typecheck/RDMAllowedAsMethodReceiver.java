@@ -1,6 +1,6 @@
-import qual.Mutable;
-import qual.ReceiverDependentMutable;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 @Immutable class RDMAllowedAsMethodReceiver {
     // :: error: (type.invalid.annotations.on.use) :: error: (method.receiver.incompatible)

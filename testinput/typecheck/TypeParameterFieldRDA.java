@@ -1,6 +1,6 @@
-import qual.Assignable;
-import qual.Immutable;
-import qual.Mutable;
+import org.checkerframework.checker.pico.qual.Assignable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
 
 @Immutable
 public class TypeParameterFieldRDA<T> {

@@ -1,5 +1,5 @@
-import qual.Immutable;
-import qual.Mutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
 
 // Enum is now only immutable by default, not implicit
 public class EnumTests{

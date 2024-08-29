@@ -17,14 +17,13 @@ import org.checkerframework.javacutil.ElementUtils;
 import org.checkerframework.javacutil.TreeUtils;
 import pico.common.PICOTypeUtil;
 import pico.typecheck.PICONoInitAnnotatedTypeFactory;
-import qual.Immutable;
+import org.checkerframework.checker.pico.qual.Immutable;
 
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.VariableElement;
 
 import java.util.Objects;
-import java.util.Set;
 
 import static pico.typecheck.PICOAnnotationMirrorHolder.*;
 

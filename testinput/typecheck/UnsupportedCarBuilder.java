@@ -1,8 +1,8 @@
 package typecheck;
 
-import qual.Immutable;
-import qual.Readonly;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Readonly;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 /**
  * This builder pattern is NOT supported if the builder internally holds the constructed

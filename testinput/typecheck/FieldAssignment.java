@@ -1,9 +1,9 @@
 package typecheck;
 
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
-import qual.Mutable;
-import qual.Immutable;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 @ReceiverDependentMutable
 public class FieldAssignment {

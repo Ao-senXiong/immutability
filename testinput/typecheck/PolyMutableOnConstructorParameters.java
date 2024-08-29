@@ -1,7 +1,7 @@
 package typecheck;
 
-import qual.Immutable;
-import qual.PolyMutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.PolyMutable;
 
 @Immutable
 public class PolyMutableOnConstructorParameters<T> {

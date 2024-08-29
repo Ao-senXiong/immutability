@@ -35,12 +35,14 @@ import com.sun.source.tree.Tree;
 import pico.common.PICOTypeUtil;
 import pico.typecheck.PICONoInitAnnotatedTypeFactory;
 import pico.typecheck.PICOViewpointAdapter;
-import qual.Bottom;
-import qual.Immutable;
-import qual.Mutable;
-import qual.PolyMutable;
-import qual.Readonly;
-import qual.ReceiverDependentMutable;
+
+import org.checkerframework.checker.pico.qual.Lost;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.PolyMutable;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Readonly;
+import org.checkerframework.checker.pico.qual.Bottom;
 
 import static pico.typecheck.PICOAnnotationMirrorHolder.*;
 
@@ -78,6 +80,7 @@ public class PICOInferenceRealTypeFactory extends BaseInferenceRealTypeFactory {
                         Mutable.class,
                         ReceiverDependentMutable.class,
                         Immutable.class,
+                        Lost.class,
                         Bottom.class));
     }
 

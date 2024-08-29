@@ -1,10 +1,10 @@
 package typecheck;
 
-import qual.Assignable;
-import qual.Mutable;
-import qual.Immutable;
-import qual.Readonly;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Assignable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Readonly;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 @ReceiverDependentMutable
 public class ViewpointAdaptationRules {

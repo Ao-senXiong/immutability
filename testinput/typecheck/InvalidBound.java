@@ -1,9 +1,9 @@
-import qual.Bottom;
-import qual.Immutable;
-import qual.Mutable;
-import qual.PolyMutable;
-import qual.Readonly;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Bottom;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.PolyMutable;
+import org.checkerframework.checker.pico.qual.Readonly;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 // :: error: (class.bound.invalid)
 @Readonly public class InvalidBound {}

@@ -1,9 +1,9 @@
 import org.checkerframework.checker.initialization.qual.UnderInitialization;
 import org.checkerframework.checker.initialization.qual.UnknownInitialization;
-import qual.Immutable;
-import qual.Mutable;
-import qual.Readonly;
-import qual.ReceiverDependentMutable;
+import org.checkerframework.checker.pico.qual.Immutable;
+import org.checkerframework.checker.pico.qual.Mutable;
+import org.checkerframework.checker.pico.qual.Readonly;
+import org.checkerframework.checker.pico.qual.ReceiverDependentMutable;
 
 // Inspire by: https://docs.oracle.com/javase/tutorial/essential/concurrency/imstrat.html
 // Allow both mutable and immutable instance creation
