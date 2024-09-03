@@ -191,7 +191,6 @@ public class PICOTypeUtil {
                                                  AnnotatedTypeFactory annotatedTypeFactory) {
         ExecutableElement element = TreeUtils.elementFromDeclaration(node);
         return isObjectIdentityMethod(element, annotatedTypeFactory);
-
     }
 
     public static boolean isObjectIdentityMethod(ExecutableElement executableElement,
@@ -231,21 +230,26 @@ public class PICOTypeUtil {
     public static void addDefaultForField(AnnotatedTypeFactory annotatedTypeFactory,
                                           AnnotatedTypeMirror annotatedTypeMirror, Element element) {
         if (element != null && element.getKind() == ElementKind.FIELD) {
+            // If the field is static, apply @Mutable if there is no explicit annotation and the field type is @RDM
            if (ElementUtils.isStatic(element)) {
                AnnotatedTypeMirror explicitATM = annotatedTypeFactory.fromElement(element);
-               if (!explicitATM.hasAnnotationInHierarchy(READONLY)) {
+               AnnotationMirrorSet declBound = annotatedTypeFactory.getTypeDeclarationBounds(element.asType());
+               if (!explicitATM.hasAnnotationInHierarchy(READONLY) && AnnotationUtils.containsSameByName(declBound, RECEIVER_DEPENDENT_MUTABLE)) {
                    if (!PICOTypeUtil.isImplicitlyImmutableType(explicitATM)) {
                        annotatedTypeMirror.replaceAnnotation(MUTABLE);
+                   } else {
+                       annotatedTypeMirror.replaceAnnotation(IMMUTABLE);
                    }
                }
            } else {
+               // Apply default annotation to instance fields if there is no explicit annotation
                AnnotatedTypeMirror explicitATM = annotatedTypeFactory.fromElement(element);
                if (!explicitATM.hasAnnotationInHierarchy(READONLY)) {
                    if (explicitATM instanceof AnnotatedDeclaredType) {
                        AnnotatedDeclaredType adt = (AnnotatedDeclaredType) explicitATM;
                        Element typeElement = adt.getUnderlyingType().asElement();
 
-                       // add RDM if bound=M and enclosingBound=M/RDM
+                       // Add RDM if Type declaration bound=M and enclosing class Bound=M/RDM
                        AnnotationMirrorSet enclosingBound = annotatedTypeFactory.getTypeDeclarationBounds(
                                Objects.requireNonNull(ElementUtils.enclosingTypeElement(element)).asType());
                        AnnotationMirrorSet declBound = annotatedTypeFactory.getTypeDeclarationBounds(element.asType());
@@ -276,7 +280,6 @@ public class PICOTypeUtil {
         Element element = ((AnnotatedDeclaredType)annotatedTypeMirror).getUnderlyingType().asElement();
         return element != null
                 && (element.getKind() == ElementKind.ENUM_CONSTANT || element.getKind() == ElementKind.ENUM);
-
     }
 
     public static boolean isEnumOrEnumConstant(TypeMirror type) {
@@ -286,13 +289,6 @@ public class PICOTypeUtil {
         Element element = ((DeclaredType)type).asElement();
         return element != null
                 && (element.getKind() == ElementKind.ENUM_CONSTANT || element.getKind() == ElementKind.ENUM);
-    }
-
-    public static void applyImmutableToEnumAndEnumConstant(AnnotatedTypeMirror annotatedTypeMirror) {
-        if (isEnumOrEnumConstant(annotatedTypeMirror)) {
-            // I guess enum constant can't have explicit annotation, am I right?
-            annotatedTypeMirror.addMissingAnnotations(Arrays.asList(IMMUTABLE));
-        }
     }
 
     // Default annotation on type declaration to constructor return type if elt is constructor and doesn't have

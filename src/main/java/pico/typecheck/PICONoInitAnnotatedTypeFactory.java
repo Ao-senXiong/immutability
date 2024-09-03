@@ -144,7 +144,6 @@ public class PICONoInitAnnotatedTypeFactory
     public void addComputedTypeAnnotations(Element elt, AnnotatedTypeMirror type) {
         PICOTypeUtil.addDefaultForField(this, type, elt);
         PICOTypeUtil.defaultConstructorReturnToClassBound(this, elt, type);
-        //        PICOTypeUtil.applyImmutableToEnumAndEnumConstant(type);
         super.addComputedTypeAnnotations(elt, type);
     }
 
@@ -155,7 +154,7 @@ public class PICONoInitAnnotatedTypeFactory
         }
 
         //
-        //        // TODO This is very ugly. Why is array component type from lhs propagates to
+        // TODO This is very ugly. Why is array component type from lhs propagates to
         // rhs?!
         @Override
         public Void visitNewArray(NewArrayTree tree, AnnotatedTypeMirror type) {
@@ -273,8 +272,7 @@ public class PICONoInitAnnotatedTypeFactory
         }
 
         // This adds @Immutable annotation to constructor return type if type declaration has
-        // @Immutable when the
-        // constructor is accessed as a tree.
+        // @Immutable when the constructor is accessed as a tree.
         @Override
         public Void visitMethod(MethodTree node, AnnotatedTypeMirror p) {
             Element element = TreeUtils.elementFromDeclaration(node);
@@ -290,7 +288,6 @@ public class PICONoInitAnnotatedTypeFactory
         public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
             VariableElement element = TreeUtils.elementFromDeclaration(node);
             PICOTypeUtil.addDefaultForField(atypeFactory, annotatedTypeMirror, element);
-            //            PICOTypeUtil.applyImmutableToEnumAndEnumConstant(annotatedTypeMirror);
             return super.visitVariable(node, annotatedTypeMirror);
         }
 

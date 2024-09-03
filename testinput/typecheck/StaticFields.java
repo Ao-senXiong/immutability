@@ -9,11 +9,7 @@ import java.util.Date;
 // 1) Has explicit annotation, e.g. d2 and d3
 // 2) Has bound annotation on Element, e.g. d. It can be from source file or stub file(jdk.astub)
 public class StaticFields {
-    // (this case again) Not implicitly immutable type - Handled by PICOTreeAnnotator on declaration
-    // Update: d is equivalent to having explicit annotations now. TreeAnnotators belong to addComputedAnnotations()
-    // phase, and they don't have any effect now(provided those TreeAnnotators don't always replaceAnnotations, and
-    // this is true for PICOTreeAnnotators: they all repect existing annotations from source and elements)
-    // Update2: d no longer gets inheritted @ReceiverDependentMutable anymore. It goes back to original
+    // D no longer gets inheritted @ReceiverDependentMutable anymore. It goes back to original
     // implementation - PICOTreeAnnotator adds @Mutable to non-implicitly immutable type. This is the result
     // of not inheritting @ReceiverDependentMutable to the usage because it creates unexpected noises.
     // As a result, d has no annotation on it, and it falls through to PICOTreeAnnotator and gets added
@@ -22,6 +18,7 @@ public class StaticFields {
     static Integer i;// Implicitly immutable type - Handled by PICOImplicitsTypeAnnotator
     static @Mutable Date d2;
     static @Immutable Date d3;
+    static ImmutableInner ii; // Default to @Immutable handled by PICOTreeAnnotator
 
     static {
         // (not the case anymore) new instance creation also has @ReceiverDependentMutable type
@@ -30,5 +27,8 @@ public class StaticFields {
         i = 2;// Handled by PICOImplicitsTypeAnnotator when used
         d2 = new @Mutable Date();
         d3 = new @Immutable Date();
+        ii = new ImmutableInner(); // Default to @Immutable handled by addComputedTypeAnnotations(Element, AnnotatedTypeMirror)
     }
+    @Immutable
+    static class ImmutableInner {}
 }
