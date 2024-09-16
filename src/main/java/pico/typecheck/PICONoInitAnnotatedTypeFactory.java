@@ -274,25 +274,25 @@ public class PICONoInitAnnotatedTypeFactory
         // This adds @Immutable annotation to constructor return type if type declaration has
         // @Immutable when the constructor is accessed as a tree.
         @Override
-        public Void visitMethod(MethodTree node, AnnotatedTypeMirror p) {
-            Element element = TreeUtils.elementFromDeclaration(node);
+        public Void visitMethod(MethodTree tree, AnnotatedTypeMirror p) {
+            Element element = TreeUtils.elementFromDeclaration(tree);
             // See:
             // https://github.com/opprop/checker-framework/blob/master/framework/src/org/checkerframework/framework/type/AnnotatedTypeFactory.java#L1593
             // for why constructor return is not applied class bound annotation
             PICOTypeUtil.defaultConstructorReturnToClassBound(atypeFactory, element, p);
-            return super.visitMethod(node, p);
+            return super.visitMethod(tree, p);
         }
 
         /** This covers the declaration of static fields */
         @Override
-        public Void visitVariable(VariableTree node, AnnotatedTypeMirror annotatedTypeMirror) {
-            VariableElement element = TreeUtils.elementFromDeclaration(node);
+        public Void visitVariable(VariableTree tree, AnnotatedTypeMirror annotatedTypeMirror) {
+            VariableElement element = TreeUtils.elementFromDeclaration(tree);
             PICOTypeUtil.addDefaultForField(atypeFactory, annotatedTypeMirror, element);
-            return super.visitVariable(node, annotatedTypeMirror);
+            return super.visitVariable(tree, annotatedTypeMirror);
         }
 
         @Override
-        public Void visitBinary(BinaryTree node, AnnotatedTypeMirror type) {
+        public Void visitBinary(BinaryTree tree, AnnotatedTypeMirror type) {
             type.replaceAnnotation(IMMUTABLE);
             return null;
         }
