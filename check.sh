@@ -8,6 +8,7 @@ export CFI=$JSR308/checker-framework-inference
 export JAVAC=$CF/checker/bin/javac
 
 export PICO=$(cd $(dirname "$0") && pwd)
+export STUBS="$JSR308"/fortest/src/main/java/pico/typecheck/jdk.astub:$JSR308/fortest/cf.astub
 
 # Dependencies
 export CLASSPATH=$PICO/build/classes/java/main:$PICO/build/resources/main:\
@@ -36,7 +37,7 @@ done
 cmd=""
 
 if [ "$DEBUG" == "" ]; then
-    cmd="$JAVAC -cp "${CLASSPATH}" -processor "${CHECKER}" "${ARGS[@]}""
+    cmd="$JAVAC -cp "${CLASSPATH}" -processor "${CHECKER}" "${ARGS[@]}" -Astubs="${STUBS}""
 else
     cmd="$JAVAC "$DEBUG" -cp "${CLASSPATH}" -processor "${CHECKER}" -AatfDoNotCache "${ARGS[@]}""
 fi
