@@ -8,7 +8,7 @@ export CFI=$JSR308/checker-framework-inference
 export JAVAC=$CF/checker/bin/javac
 
 export PICO=$(cd $(dirname "$0") && pwd)
-export STUBS="$JSR308"/fortest/src/main/java/pico/typecheck/jdk.astub:$JSR308/fortest/cf.astub
+export STUBS=$PICO/src/main/java/pico/typecheck/jdk.astub:$PICO/cf.astub
 
 # Dependencies
 export CLASSPATH=$PICO/build/classes/java/main:$PICO/build/resources/main:\
