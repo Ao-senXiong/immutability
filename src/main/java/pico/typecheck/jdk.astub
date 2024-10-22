@@ -106,13 +106,23 @@ class Properties {
   @Readonly Object put(@Immutable Object key, @Readonly Object value);
 }
 
-interface Iterator<E extends @Readonly Object> {}
+@ReceiverDependentMutable
+class Iterable<E> {
+  Iterator<E> iterator(@Readonly Iterable this);
+}
+
+@ReceiverDependentMutable
+interface Iterator<E extends @Readonly Object> {
+    boolean hasNext(@Readonly Iterator this);
+    @Immutable E next();
+}
 
 @ReceiverDependentMutable
 class Date {
   @ReceiverDependentMutable Date();
   @ReceiverDependentMutable Date(long var1);
-  int getHours(@ReceiverDependentMutable Date this);
+  int getHours(@Readonly Date this);
+  long getTime(@Readonly Date this);
 }
 
 @ReceiverDependentMutable
@@ -123,6 +133,7 @@ interface Collection<E> {
 @ReceiverDependentMutable
 public abstract class AbstractCollection<E> implements Collection<E> {
     public abstract int size(@Readonly AbstractCollection this);
+    public boolean contains(@Readonly Object o);
 }
 
 @ReceiverDependentMutable
@@ -197,7 +208,7 @@ interface Map<K extends @Immutable Object, V> {
   boolean isEmpty(@Readonly Map<K, V> this);
   boolean containsKey(@Readonly Map<K, V> this, @Readonly Object var1);
   boolean containsValue(@Readonly Map<K, V> this, @Readonly Object value);
-  V get(@Readonly Map<K, V> this, Object var1);
+  V get(@Readonly Map<K, V> this, @Immutable Object key);
   V remove(@Readonly Object key);
   void putAll(@Readonly Map<? extends K, ? extends V> m);
   Set<K> keySet(@Readonly Map<K, V> this);
@@ -216,7 +227,7 @@ class HashMap<K extends @Immutable Object, V> {
 
 class Collections {
   static <T> @Immutable List<T> unmodifiableList(@Readonly List<? extends T> list);
-  static <T> @Immutable List<T> singletonList(T var0);
+  static <T> @Immutable List<T> singletonList(@Readonly T var0);
   static <T> @Immutable Set<T> singleton(T var0);
 }
 
