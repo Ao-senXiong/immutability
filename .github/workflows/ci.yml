@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master, aosen-master ]
+    branches: [ master, aosen-master, pico-cf-only ]
   pull_request:
-    branches: [ master, aosen-master ]
+    branches: [ master, aosen-master, pico-cf-only ]
 
 jobs:
   build:
