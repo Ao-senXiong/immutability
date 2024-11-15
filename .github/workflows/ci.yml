@@ -10,7 +10,7 @@ jobs:
   build:
     strategy:
       matrix:
-        jdk: [ 11, 8, 17 ]
+        jdk: [ 11, 8 ]
     runs-on: ubuntu-latest
 
     steps:
@@ -47,11 +47,3 @@ jobs:
       - name: PICO Typecheck Extended Test
         if: ${{ steps.build.outcome == 'success' }}
         run: ./gradlew ImmutabilityTypecheckExtendedTest
-
-#      - name: PICO Inference Initial Typecheck Test
-#        if: ${{ steps.build.outcome == 'success' }}
-#        run: ./gradlew ImmutabilityInferenceInitialTypecheckTest
-#
-#      - name: PICO Inference Test
-#        if: ${{ steps.build.outcome == 'success' }}
-#        run: ./gradlew ImmutabilityInferenceTest
