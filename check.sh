@@ -12,7 +12,7 @@ export STUBS=$PICO/src/main/java/pico/typecheck/jdk.astub:$PICO/cf.astub
 
 # Dependencies
 export CLASSPATH=$PICO/build/classes/java/main:$PICO/build/resources/main:\
-$PICO/build/libs/immutability.jar:$CFI/dist/checker-framework-inference.jar
+$PICO/build/libs/immutability.jar:$CF/checker/dist/checker.jar:$CF/checker/dist/checker-util.jar:$CF/checker/dist/checker-qual.jar
 
 # Command
 DEBUG=""
@@ -37,7 +37,7 @@ done
 cmd=""
 
 if [ "$DEBUG" == "" ]; then
-    cmd="$JAVAC -cp "${CLASSPATH}" -processor "${CHECKER}" "${ARGS[@]}" -Astubs="${STUBS}""
+    cmd="$JAVAC -cp "${CLASSPATH}" -processor "${CHECKER}" "${ARGS[@]}" -Astubs="${STUBS}" -AdumpOnErrors"
 else
     cmd="$JAVAC "$DEBUG" -cp "${CLASSPATH}" -processor "${CHECKER}" -AatfDoNotCache "${ARGS[@]}""
 fi

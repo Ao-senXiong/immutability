@@ -1,11 +1,5 @@
 package pico.common;
 
-import checkers.inference.InferenceMain;
-import checkers.inference.SlotManager;
-import checkers.inference.model.ConstantSlot;
-import checkers.inference.model.ConstraintManager;
-import checkers.inference.model.Slot;
-import checkers.inference.util.InferenceUtil;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.ExpressionTree;
 import com.sun.source.tree.MethodTree;
@@ -28,7 +22,6 @@ import org.checkerframework.checker.pico.qual.Assignable;
 import org.checkerframework.checker.pico.qual.Immutable;
 import org.checkerframework.checker.pico.qual.ObjectIdentityMethod;
 
-import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -301,27 +294,6 @@ public class PICOTypeUtil {
         }
     }
 
-    public static void applyConstant(AnnotatedTypeMirror type, AnnotationMirror am) {
-        SlotManager slotManager = InferenceMain.getInstance().getSlotManager();
-        ConstraintManager constraintManager = InferenceMain.getInstance().getConstraintManager();
-        // Might be null. It's normal. In typechecking side, we use addMissingAnnotations(). Only if
-        // there is existing annotation in code, then here is non-null. Otherwise, VariableAnnotator
-        // hasn't come into the picture yet, so no VarAnnot exists here, which is normal.
-        Slot shouldBeAppliedTo = slotManager.getSlot(type);
-        ConstantSlot constant = slotManager.createConstantSlot(am);
-        if (shouldBeAppliedTo == null) {
-            // Here, we are adding VarAnnot that represents @Immutable. There won't be solution for this ConstantSlot for this type,
-            // so the inserted-back source code doesn't have explicit annotation @Immutable. But it is not wrong. It makes the code
-            // cleaner by omitting implicit annotations. General principle is that for ConstantSlot, there won't be annotation inserted
-            // back to the original source code, BUT this ConstantSlot(representing @Immutable) will be used for constraint generation
-            // that affects the solutions for other VariableSlots
-            type.addAnnotation(slotManager.getAnnotation(constant));// Insert Constant VarAnnot that represents @Immutable
-//            type.addAnnotation(am);// Insert real @Immutable. This should be removed if INF-FR only uses VarAnnot
-        } else {
-            constraintManager.addEqualityConstraint(shouldBeAppliedTo, constant);
-        }
-    }
-
     /**Check if a field is final or not.*/
     public static boolean isFinalField(Element variableElement) {
         assert variableElement instanceof VariableElement;  // FIXME consider rm
@@ -407,7 +379,7 @@ public class PICOTypeUtil {
         TreePath path = atypeFactory.getPath(tree);
         if (path != null) {
             ClassTree classTree = TreePathUtil.enclosingClass(path);
-            return classTree != null && InferenceUtil.isAnonymousClass(classTree);
+            return classTree != null;
         }
         return false;
     }
@@ -423,12 +395,6 @@ public class PICOTypeUtil {
             enclosingType = (AnnotatedDeclaredType) atypeFactory.getAnnotatedType(newclassTree);
         }
         return enclosingType;
-    }
-
-    public static AnnotationMirror createEquivalentVarAnnotOfRealQualifier(final AnnotationMirror am) {
-        final SlotManager slotManager = InferenceMain.getInstance().getSlotManager();
-        ConstantSlot constantSlot = slotManager.createConstantSlot(am);
-        return slotManager.getAnnotation(constantSlot);
     }
 
     public static boolean inStaticScope(TreePath treePath) {
