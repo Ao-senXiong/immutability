@@ -2,6 +2,7 @@ plugins {
     // Plugin that applies Google-Java-format to the Java files in the project.
     // https://github.com/sherter/google-java-format-gradle-plugin
     // id 'com.github.sherter.google-java-format' version '0.6'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 apply plugin: 'java'
@@ -69,6 +70,15 @@ sourceSets {
             srcDirs = ["src/test/java"]
         }
     }
+}
+
+shadowJar {
+    dependencies {
+        exclude(dependency("junit:.*:.*"))
+    }
+    description 'Creates the "fat" immutability.jar in dist'
+    destinationDirectory = file("${projectDir}/dist")
+    archiveFileName = "immutability-pico.jar"
 }
 
 compileJava {
