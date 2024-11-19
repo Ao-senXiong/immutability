@@ -242,6 +242,7 @@ class Arrays {
   static String toString(int @Readonly [] var0);
   static boolean equals(float @Readonly [] var0, float @Readonly [] var1);
   static boolean equals(double @Readonly [] var0, double @Readonly [] var1);
+  static boolean equals(byte @Readonly [] var0, byte @Readonly [] var1);
   static <T> T[] copyOf(T @Readonly [] original, int newLength);
 }
 

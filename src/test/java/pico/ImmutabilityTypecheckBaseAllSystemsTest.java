@@ -16,7 +16,7 @@ import java.util.List;
 public class ImmutabilityTypecheckBaseAllSystemsTest extends CheckerFrameworkPerFileTest {
     public ImmutabilityTypecheckBaseAllSystemsTest(File testFile) {
         super(testFile, PICOChecker.class, "", "-Anomsgtext", "-AsuppressWarnings=pico",
-                "-Anocheckjdk", "-d", "testTmp/typecheck");
+                "-ApermitMissingJdk", "-d", "testTmp/typecheck");
     }
 
     @Parameters

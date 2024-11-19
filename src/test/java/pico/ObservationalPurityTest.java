@@ -12,7 +12,7 @@ import java.util.List;
 public class ObservationalPurityTest extends CheckerFrameworkPerFileTest {
     public ObservationalPurityTest(File testFile) {
         super(testFile, PICOChecker.class, "", "-Anomsgtext",
-                "-Anocheckjdk", "-d", "testTmp/abstractStateOnly", "-AabstractStateOnly");
+                "-ApermitMissingJdk", "-d", "testTmp/abstractStateOnly", "-AabstractStateOnly");
     }
 
     @Parameterized.Parameters

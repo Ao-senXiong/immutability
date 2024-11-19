@@ -43,7 +43,7 @@ public class ImmutableConstructor {
         // :: error: (constructor.invocation.invalid)
         new @ReceiverDependentMutable ImmutableConstructor(po, io);
         /// TODO: is too many error a good thing?
-        // :: error: (constructor.invocation.invalid) :: error: (pico.new.invalid) :: error: (argument.type.incompatible)
+        // :: error: (constructor.invocation.invalid) :: error: (argument.type.incompatible)
         new @Readonly ImmutableConstructor(ro, io);
     }
 }

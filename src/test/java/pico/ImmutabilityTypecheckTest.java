@@ -12,7 +12,7 @@ import java.util.List;
 public class ImmutabilityTypecheckTest extends CheckerFrameworkPerFileTest {
     public ImmutabilityTypecheckTest(File testFile) {
         super(testFile, PICOChecker.class, "", "-Anomsgtext",
-                "-Anocheckjdk", "-d", "testTmp/typecheck");
+                "-ApermitMissingJdk", "-d", "testTmp/typecheck");
     }
 
     @Parameters

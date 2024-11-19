@@ -180,8 +180,7 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
         /*Copied Code End*/
 
         // The immutability return qualifier of the constructor (returnType) must be supertype of
-        // the
-        // constructor invocation immutability qualifier(invocation).
+        // the constructor invocation immutability qualifier(invocation).
         if (!atypeFactory
                 .getQualifierHierarchy()
                 .isSubtypeQualifiersOnly(
@@ -207,26 +206,27 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
                 return super.visitMethod(node, p);
             }
             // if no explicit anno it must inherit from class decl so identical
-            // => if not the same must not inherited from class decl
-            // => no need to check the source of the anno
-
         } else {
-            AnnotatedDeclaredType declareReceiverType = executableType.getReceiverType();
-            if (declareReceiverType != null) {
-                if (bound != null
-                        && !bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
-                        && !atypeFactory
-                                .getQualifierHierarchy()
-                                .isSubtypeQualifiersOnly(
-                                        declareReceiverType.getAnnotationInHierarchy(READONLY),
-                                        bound.getAnnotationInHierarchy(READONLY))
-                        // Below three are allowed on declared receiver types of instance methods in
-                        // either @Mutable class or @Immutable class
-                        && !declareReceiverType.hasAnnotation(READONLY)
-                        && !declareReceiverType.hasAnnotation(POLY_MUTABLE)) {
-                    checker.reportError(node, "method.receiver.incompatible", declareReceiverType);
+            // Feat: let's just use validator to tell whether the receiver is compatible with bound or not
+            /*
+                // For non-constructor methods
+                AnnotatedDeclaredType declareReceiverType = executableType.getReceiverType();
+                if (declareReceiverType != null) {
+                    if (bound != null
+                            && !bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
+                            && !atypeFactory
+                                    .getQualifierHierarchy()
+                                    .isSubtypeQualifiersOnly(
+                                            declareReceiverType.getAnnotationInHierarchy(READONLY),
+                                            bound.getAnnotationInHierarchy(READONLY))
+                            // Below three are allowed on declared receiver types of instance methods in
+                            // either @Mutable class or @Immutable class
+                            && !declareReceiverType.hasAnnotation(READONLY)
+                            && !declareReceiverType.hasAnnotation(POLY_MUTABLE)) {
+                        checker.reportError(node, "method.receiver.incompatible", declareReceiverType, bound);
+                    }
                 }
-            }
+             */
         }
 
         flexibleOverrideChecker(node);
@@ -395,31 +395,25 @@ public class PICONoInitVisitor extends BaseTypeVisitor<PICONoInitAnnotatedTypeFa
     }
 
     @Override
-    public Void visitNewClass(NewClassTree tree, Void p) {
-        checkNewInstanceCreation(tree);
-        return super.visitNewClass(tree, p);
-    }
-
-    @Override
     public Void visitNewArray(NewArrayTree tree, Void p) {
-        checkNewInstanceCreation(tree);
+        checkNewArrayCreation(tree);
         return super.visitNewArray(tree, p);
     }
 
     /**
-     * Helper method to check the immutability type on new instance creation. Only @Immutable, @Mutable and
+     * Helper method to check the immutability type on new array creation. Only @Immutable, @Mutable and
      * @ReceiverDependentMutable are allowed.
      *
      * @param tree the tree to check
      */
-    private void checkNewInstanceCreation(Tree tree) {
+    private void checkNewArrayCreation(Tree tree) {
         AnnotatedTypeMirror type = atypeFactory.getAnnotatedType(tree);
         if (!(type.hasAnnotation(IMMUTABLE)
                 || type.hasAnnotation(MUTABLE)
                 || type.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)
                 // TODO: allow poly_mutable creation or not?
                 || type.hasAnnotation(POLY_MUTABLE))) {
-            checker.reportError(tree, "pico.new.invalid", type);
+            checker.reportError(tree, "array.new.invalid", type);
         }
     }
 

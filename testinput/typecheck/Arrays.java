@@ -12,7 +12,7 @@ public class Arrays{
     }
 
     void test2() {
-        // :: error: (pico.new.invalid)
+        // :: error: (array.new.invalid)
         int [] a = new int @Readonly []{1,2};
     }
 

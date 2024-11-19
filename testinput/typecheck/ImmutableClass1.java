@@ -18,12 +18,12 @@ class ImmutableClass1{
 
     void method2(@Immutable ImmutableClass1 this) {}
 
-    // :: error: (type.invalid.annotations.on.use) :: error: (method.receiver.incompatible)
+    // :: error: (type.invalid.annotations.on.use)
     void method3(@ReceiverDependentMutable ImmutableClass1 this) {}
 
     void method4(@PolyMutable ImmutableClass1 this) {}
 
-    // :: error: (method.receiver.incompatible) :: error: (type.invalid.annotations.on.use)
+    // :: error: (type.invalid.annotations.on.use)
     void method5(@Mutable ImmutableClass1 this) {}
 
 

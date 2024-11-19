@@ -121,10 +121,10 @@ public class PICONoInitAnnotatedTypeFactory
 
     @Override
     public ParameterizedExecutableType constructorFromUse(NewClassTree tree) {
-        boolean hasExplicitAnnos = !getExplicitNewClassAnnos(tree).isEmpty();
+        boolean hasExplicitAnnos = getExplicitNewClassAnnos(tree).isEmpty();
         ParameterizedExecutableType mType = super.constructorFromUse(tree);
         AnnotatedExecutableType method = mType.executableType;
-        if (!hasExplicitAnnos && method.getReturnType().hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
+        if (hasExplicitAnnos && method.getReturnType().hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
             method.getReturnType().replaceAnnotation(MUTABLE);
         }
         return mType;
@@ -276,9 +276,6 @@ public class PICONoInitAnnotatedTypeFactory
         @Override
         public Void visitMethod(MethodTree tree, AnnotatedTypeMirror p) {
             Element element = TreeUtils.elementFromDeclaration(tree);
-            // See:
-            // https://github.com/opprop/checker-framework/blob/master/framework/src/org/checkerframework/framework/type/AnnotatedTypeFactory.java#L1593
-            // for why constructor return is not applied class bound annotation
             PICOTypeUtil.defaultConstructorReturnToClassBound(atypeFactory, element, p);
             return super.visitMethod(tree, p);
         }
@@ -398,7 +395,7 @@ public class PICONoInitAnnotatedTypeFactory
         /** Also applies implicits to method receiver */
         @Override
         public Void visitExecutable(AnnotatedExecutableType t, Void p) {
-            // TODO The implementation before doesn't work after update. Previously, I sanned the
+            // TODO The implementation before doesn't work after update. Previously, I scanned the
             // method receiver without null check. But even if I check nullness, scanning receiver
             // at first caused some tests to fail. Need to investigate the reason.
             super.visitExecutable(t, p);
@@ -418,17 +415,12 @@ public class PICONoInitAnnotatedTypeFactory
     }
 
     // TODO Right now, instance method receiver cannot inherit bound annotation from class element,
-    // and
-    // this caused the inconsistency when accessing the type of receiver while visiting the method
-    // and
-    // while visiting the variable tree. Implicit annotation can be inserted to method receiver via
+    // and this caused the inconsistency when accessing the type of receiver while visiting the method
+    // and while visiting the variable tree. Implicit annotation can be inserted to method receiver via
     // extending DefaultForTypeAnnotator; But InheritedFromClassAnnotator cannot be inheritted
-    // because its
-    // constructor is private and I can't override it to also inherit bound annotation from class
-    // element
-    // to the declared receiver type of instance methods. To view the details, look at
-    // ImmutableClass1.java
-    // testcase.
+    // because its constructor is private and I can't override it to also inherit bound annotation from class
+    // element to the declared receiver type of instance methods. To view the details, look at
+    // ImmutableClass1.java testcase.
     // class PICOInheritedFromClassAnnotator extends InheritedFromClassAnnotator {}
 
     public static class PICOSuperClauseAnnotator extends TreeAnnotator {
@@ -466,7 +458,6 @@ public class PICONoInitAnnotatedTypeFactory
                         atypeFactory.getAnnotatedType(TreePathUtil.enclosingClass(path));
                 AnnotationMirror mainBound = enclosing.getAnnotationInHierarchy(READONLY);
                 mirror.replaceAnnotation(mainBound);
-                //                System.err.println("ANNOT: ADDED DEFAULT FOR: " + mirror);
             }
         }
 
