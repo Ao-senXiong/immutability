@@ -130,14 +130,16 @@ public class PICONoInitAnnotatedTypeFactory
         return mType;
     }
 
-    /** Forbid applying top annotations to type variables if they are used on local variables */
+    /**
+     * {@inheritDoc} Forbid applying top annotations to type variables if they are used on local variables.
+     */
     @Override
     public boolean getShouldDefaultTypeVarLocals() {
         return false;
     }
 
     /**
-     * This covers the case when static fields are used and constructor is accessed as an
+     * {@inheritDoc} This covers the case when static fields are used and constructor is accessed as an
      * element(regarding applying @Immutable on type declaration to constructor return type).
      */
     @Override
@@ -145,6 +147,103 @@ public class PICONoInitAnnotatedTypeFactory
         PICOTypeUtil.addDefaultForField(this, type, elt);
         PICOTypeUtil.defaultConstructorReturnToClassBound(this, elt, type);
         super.addComputedTypeAnnotations(elt, type);
+    }
+
+    public PICOViewpointAdapter getViewpointAdapter() {
+        return (PICOViewpointAdapter) viewpointAdapter;
+    }
+
+    /**
+     * {@inheritDoc} Changes the framework default to @Mutable
+     * @return Mutable default AnnotationMirrorSet
+     */
+    @Override
+    protected AnnotationMirrorSet getDefaultTypeDeclarationBounds() {
+        AnnotationMirrorSet frameworkDefault =
+                new AnnotationMirrorSet(super.getDefaultTypeDeclarationBounds());
+        return replaceAnnotationInHierarchy(frameworkDefault, MUTABLE);
+    }
+
+    @Override
+    public AnnotationMirrorSet getTypeDeclarationBounds(TypeMirror type) {
+        AnnotationMirror mut = getTypeDeclarationBoundForMutability(type);
+        AnnotationMirrorSet frameworkDefault = super.getTypeDeclarationBounds(type);
+        if (mut != null) {
+            frameworkDefault = replaceAnnotationInHierarchy(frameworkDefault, mut);
+        }
+        return frameworkDefault;
+    }
+
+    /**
+     * Replace the annotation in the hierarchy with the given AnnotationMirrorSet.
+     *
+     * @param set The AnnotationMirrorSet to replace the annotation in
+     * @param mirror The AnnotationMirror to replace with
+     * @return The replaced AnnotationMirrorSet
+     */
+    private AnnotationMirrorSet replaceAnnotationInHierarchy(
+            AnnotationMirrorSet set, AnnotationMirror mirror) {
+        AnnotationMirrorSet result = new AnnotationMirrorSet(set);
+        AnnotationMirror removeThis =
+                getQualifierHierarchy().findAnnotationInSameHierarchy(set, mirror);
+        result.remove(removeThis);
+        result.add(mirror);
+        return result;
+    }
+
+    /**
+     * Get the upperbound give a TypeMirror
+     * 1. If  the type is implicitly immutable, return @Immutable
+     * 2. If the type is an enum, return @Immutable if it has no explicit annotation
+     * 3. If the type is an array, return @ReceiverDependentMutable
+     * 4. Otherwise, return null
+     *
+     * @param type
+     * @return
+     */
+
+    public AnnotationMirror getTypeDeclarationBoundForMutability(TypeMirror type) {
+        if (PICOTypeUtil.isImplicitlyImmutableType(toAnnotatedType(type, false))) {
+            return IMMUTABLE;
+        }
+        if (type.getKind() == TypeKind.ARRAY) {
+            return RECEIVER_DEPENDENT_MUTABLE; // if decided to use vpa for array, return RDM.
+        }
+        // IMMUTABLE for enum w/o decl anno
+        if (type instanceof DeclaredType) {
+            Element ele = ((DeclaredType) type).asElement();
+            if (ele.getKind() == ElementKind.ENUM) {
+                // TODO refine the logic here for enum
+                if (!AnnotationUtils.containsSameByName(getDeclAnnotations(ele), MUTABLE)
+                        && !AnnotationUtils.containsSameByName(
+                        getDeclAnnotations(ele),
+                        RECEIVER_DEPENDENT_MUTABLE)) { // no decl anno
+                    return IMMUTABLE;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public AnnotatedTypeMirror getTypeOfExtendsImplements(Tree clause) {
+        // this is still needed with PICOSuperClauseAnnotator.
+        // maybe just use getAnnotatedType
+        // add default anno from class main qual, if no qual present
+        AnnotatedTypeMirror fromTypeTree = super.getTypeOfExtendsImplements(clause);
+        if (fromTypeTree.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
+            ClassTree enclosingClass = TreePathUtil.enclosingClass(getPath(clause));
+            //TODO This is a hack but fixed a few crash errors, look what will be the overall solution.
+            if (enclosingClass == null) {
+                return fromTypeTree;
+            } else {
+                AnnotatedTypeMirror enclosing =
+                        getAnnotatedType(enclosingClass);
+                AnnotationMirror mainBound = enclosing.getAnnotationInHierarchy(READONLY);
+                fromTypeTree.replaceAnnotation(mainBound);
+            }
+        }
+        return fromTypeTree;
     }
 
     /** Tree Annotators */
@@ -188,91 +287,17 @@ public class PICONoInitAnnotatedTypeFactory
 
     }
 
-    public PICOViewpointAdapter getViewpointAdapter() {
-        return (PICOViewpointAdapter) viewpointAdapter;
-    }
-
-    @Override
-    protected AnnotationMirrorSet getDefaultTypeDeclarationBounds() {
-        AnnotationMirrorSet frameworkDefault =
-                new AnnotationMirrorSet(super.getDefaultTypeDeclarationBounds());
-        return replaceAnnotationInHierarchy(frameworkDefault, MUTABLE);
-    }
-
-    @Override
-    public AnnotationMirrorSet getTypeDeclarationBounds(TypeMirror type) {
-        AnnotationMirror mut = getTypeDeclarationBoundForMutability(type);
-        AnnotationMirrorSet frameworkDefault = super.getTypeDeclarationBounds(type);
-        if (mut != null) {
-            frameworkDefault = replaceAnnotationInHierarchy(frameworkDefault, mut);
-        }
-        return frameworkDefault;
-    }
-
-    private AnnotationMirrorSet replaceAnnotationInHierarchy(
-            AnnotationMirrorSet set, AnnotationMirror mirror) {
-        AnnotationMirrorSet result = new AnnotationMirrorSet(set);
-        AnnotationMirror removeThis =
-                getQualifierHierarchy().findAnnotationInSameHierarchy(set, mirror);
-        result.remove(removeThis);
-        result.add(mirror);
-        return result;
-    }
-
-    public AnnotationMirror getTypeDeclarationBoundForMutability(TypeMirror type) {
-        // copied from inference real type factory with minor modification
-        // TODO too awkward. maybe overload isImplicitlyImmutableType
-        if (PICOTypeUtil.isImplicitlyImmutableType(toAnnotatedType(type, false))) {
-            return IMMUTABLE;
-        }
-        if (type.getKind() == TypeKind.ARRAY) {
-            return RECEIVER_DEPENDENT_MUTABLE; // if decided to use vpa for array, return RDM.
-        }
-
-        // IMMUTABLE for enum w/o decl anno
-        if (type instanceof DeclaredType) {
-            Element ele = ((DeclaredType) type).asElement();
-            if (ele.getKind() == ElementKind.ENUM) {
-                if (!AnnotationUtils.containsSameByName(getDeclAnnotations(ele), MUTABLE)
-                        && !AnnotationUtils.containsSameByName(
-                                getDeclAnnotations(ele),
-                        RECEIVER_DEPENDENT_MUTABLE)) { // no decl anno
-                    return IMMUTABLE;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public AnnotatedTypeMirror getTypeOfExtendsImplements(Tree clause) {
-        // this is still needed with PICOSuperClauseAnnotator.
-        // maybe just use getAnnotatedType
-        // add default anno from class main qual, if no qual present
-        AnnotatedTypeMirror fromTypeTree = super.getTypeOfExtendsImplements(clause);
-        if (fromTypeTree.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
-            ClassTree enclosingClass = TreePathUtil.enclosingClass(getPath(clause));
-            //TODO This is a hack but fixed a few crash errors, look what will be the overall solution.
-            if (enclosingClass == null) {
-                return fromTypeTree;
-            } else {
-                AnnotatedTypeMirror enclosing =
-                        getAnnotatedType(enclosingClass);
-                AnnotationMirror mainBound = enclosing.getAnnotationInHierarchy(READONLY);
-                fromTypeTree.replaceAnnotation(mainBound);
-            }
-        }
-        return fromTypeTree;
-    }
-
-    /** Apply defaults for static fields with non-implicitly immutable types */
+    /**
+     * Apply defaults for static fields with non-implicitly immutable types.
+     */
     public static class PICOTreeAnnotator extends TreeAnnotator {
         public PICOTreeAnnotator(AnnotatedTypeFactory atypeFactory) {
             super(atypeFactory);
         }
 
-        // This adds @Immutable annotation to constructor return type if type declaration has
-        // @Immutable when the constructor is accessed as a tree.
+        /** {@inheritDoc} This adds @Immutable annotation to constructor return type if type declaration has @Immutable
+         * when the constructor is accessed as a tree.
+         */
         @Override
         public Void visitMethod(MethodTree tree, AnnotatedTypeMirror p) {
             Element element = TreeUtils.elementFromDeclaration(tree);
@@ -280,7 +305,9 @@ public class PICONoInitAnnotatedTypeFactory
             return super.visitMethod(tree, p);
         }
 
-        /** This covers the declaration of static fields */
+        /**
+         * {@inheritDoc} This covers the declaration of static fields
+         */
         @Override
         public Void visitVariable(VariableTree tree, AnnotatedTypeMirror annotatedTypeMirror) {
             VariableElement element = TreeUtils.elementFromDeclaration(tree);
@@ -345,12 +372,16 @@ public class PICONoInitAnnotatedTypeFactory
         }
     }
 
+    /**
+     * {@inheritDoc} This is for overriding the behavior of DefaultQualifierForUse and use PICOQualifierForUseTypeAnnotator.
+     *
+     * @return PICOQualifierForUseTypeAnnotator
+     */
     @Override
     protected DefaultQualifierForUseTypeAnnotator createDefaultForUseTypeAnnotator() {
         return new PICOQualifierForUseTypeAnnotator(this);
     }
 
-    // @DefaultQFU
     public static class PICOQualifierForUseTypeAnnotator
             extends DefaultQualifierForUseTypeAnnotator {
 

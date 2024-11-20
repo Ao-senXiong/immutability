@@ -56,6 +56,12 @@ public class PICOTypeUtil {
         sideEffectingUnaryOperators.add(Tree.Kind.PREFIX_DECREMENT);
     }
 
+    /**
+     * Determine if Typekind is one of the @DefaultFor typeKinds in @Immutable annotation.
+     *
+     * @param atm AnnotatedTypeMirror to be checked
+     * @return true if TypeKind is one of the @DefaultFor typeKinds in @Immutable annotation, false otherwise
+     */
     private static boolean isInTypeKindsOfDefaultForOfImmutable(AnnotatedTypeMirror atm) {
         DefaultFor defaultFor = Immutable.class.getAnnotation(DefaultFor.class);
         assert defaultFor != null;
@@ -65,6 +71,12 @@ public class PICOTypeUtil {
         return false;
     }
 
+    /**
+     * Determine if Type is one of the @DefaultFor types in @Immutable annotation.
+     *
+     * @param atm AnnotatedTypeMirror to be checked
+     * @return true if Type is one of the @DefaultFor types in @Immutable annotation, false otherwise
+     */
     private static boolean isInTypesOfDefaultForOfImmutable(AnnotatedTypeMirror atm) {
         if (!atm.getKind().name().equals(TypeKind.DECLARED.name())) {
             return false;
@@ -81,8 +93,13 @@ public class PICOTypeUtil {
         return false;
     }
 
-    /**Method to determine if the underlying type is implicitly immutable. This method is consistent
-     * with the types and typeNames that are in @ImplicitFor in the definition of @Immutable qualifier*/
+    /**
+     * Determine if the underlying type is implicitly immutable. This method is consistent
+     * with the types and typeKinds that are in @DefaultFor in the definition of @Immutable qualifier.
+     *
+     * @param atm AnnotatedTypeMirror to be checked
+     * @return true if the underlying type is implicitly immutable, false otherwise
+     */
     public static boolean isImplicitlyImmutableType(AnnotatedTypeMirror atm) {
         return isInTypeKindsOfDefaultForOfImmutable(atm)
                 || isInTypesOfDefaultForOfImmutable(atm);
@@ -91,9 +108,8 @@ public class PICOTypeUtil {
     /**
      * Returns the bound of type declaration enclosing the node.
      * If no annotation exists on type declaration, bound is defaulted to @Mutable instead of having empty annotations.
-     * This method simply gets/defaults annotation on bounds of classes, but
-     * doesn't validate the correctness of the annotation. They are validated in {@link PICOVisitor#processClassTree(ClassTree)}
-     * method.
+     * This method simply gets/defaults annotation on bounds of classes, but doesn't validate the correctness of the
+     * annotation. They are validated in {@link pico.typecheck.PICONoInitVisitor#processClassTree(ClassTree)} method.
      *
      * @param node tree whose enclosing type declaration's bound annotation is to be extracted
      * @param atypeFactory pico type factory
@@ -119,6 +135,16 @@ public class PICOTypeUtil {
         return null;
     }
 
+    /**
+     * Returns the bound of type declaration enclosing the element.
+     * If no annotation exists on type declaration, bound is defaulted to @Mutable instead of having empty annotations.
+     * This method simply gets/defaults annotation on bounds of classes, but doesn't validate the correctness of the
+     * annotation. They are validated in {@link pico.typecheck.PICONoInitVisitor#processClassTree(ClassTree)} method.
+     *
+     * @param element element whose enclosing type declaration's bound annotation is to be extracted
+     * @param atypeFactory pico type factory
+     * @return annotation on the bound of enclosing type declaration
+     */
     public static AnnotatedDeclaredType getBoundTypeOfEnclosingTypeDeclaration(Element element, AnnotatedTypeFactory atypeFactory) {
         TypeElement typeElement = ElementUtils.enclosingTypeElement(element);
         if (typeElement != null) {
@@ -158,6 +184,16 @@ public class PICOTypeUtil {
         return getBoundTypeOfTypeDeclaration(typeElement, atypeFactory);
     }
 
+    /**
+     * Returns the bound of type declaration. If no annotation exists on type declaration, bound is defaulted to @Mutable
+     * instead of having empty annotations. This method simply gets/defaults annotation on bounds of classes, but doesn't
+     * validate the correctness of the annotation. They are validated in
+     * {@link pico.typecheck.PICONoInitVisitor#processClassTree(ClassTree)} method.
+     *
+     * @param typeElement type declaration whose bound annotation is to be extracted
+     * @param atypeFactory pico type factory
+     * @return annotation on the bound of type declaration
+     */
     public static AnnotatedDeclaredType getBoundTypeOfTypeDeclaration(TypeElement typeElement, AnnotatedTypeFactory atypeFactory) {
         // Reads bound annotation from source code or stub files
         // Implicitly immutable types have @Immutable in its bound
@@ -242,15 +278,15 @@ public class PICOTypeUtil {
                        AnnotatedDeclaredType adt = (AnnotatedDeclaredType) explicitATM;
                        Element typeElement = adt.getUnderlyingType().asElement();
 
-                       // Add RDM if Type declaration bound=M and enclosing class Bound=M/RDM
                        AnnotationMirrorSet enclosingBound = annotatedTypeFactory.getTypeDeclarationBounds(
                                Objects.requireNonNull(ElementUtils.enclosingTypeElement(element)).asType());
                        AnnotationMirrorSet declBound = annotatedTypeFactory.getTypeDeclarationBounds(element.asType());
-                       if (AnnotationUtils.containsSameByName(declBound, MUTABLE)) {
-                           if (AnnotationUtils.containsSameByName(enclosingBound, MUTABLE)) {
+                       // Add RDM if Type declaration bound=M and enclosing class Bound=M/RDM
+                       // If the declaration bound is mutable and the enclosing class is also mutable, replace the annotation as RDM.
+                       if (AnnotationUtils.containsSameByName(declBound, MUTABLE) && AnnotationUtils.containsSameByName(enclosingBound, MUTABLE)) {
                                annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDENT_MUTABLE);
-                           }
                        }
+                       // If the declaration bound is RDM, replace the annotation as RDM
                        if (typeElement instanceof TypeElement) {
                            AnnotatedDeclaredType bound = getBoundTypeOfTypeDeclaration((TypeElement) typeElement, annotatedTypeFactory);
                            if (bound.hasAnnotation(RECEIVER_DEPENDENT_MUTABLE)) {
@@ -258,7 +294,7 @@ public class PICOTypeUtil {
                            }
                        }
                    } else if (explicitATM instanceof AnnotatedArrayType) {
-                       // Also apply rdm to array main.
+                       // If the ATM is array type, apply RMD to array's component type.
                        annotatedTypeMirror.replaceAnnotation(RECEIVER_DEPENDENT_MUTABLE);
                    }
                }
@@ -284,8 +320,10 @@ public class PICOTypeUtil {
                 && (element.getKind() == ElementKind.ENUM_CONSTANT || element.getKind() == ElementKind.ENUM);
     }
 
-    // Default annotation on type declaration to constructor return type if elt is constructor and doesn't have
-    // explicit annotation(type is actually AnnotatedExecutableType of executable element - elt constructor)
+    /**
+     * Add default annotation froom type declaration to constructor return type if elt is constructor and doesn't have
+     * explicit annotation(type is actually AnnotatedExecutableType of executable element - elt constructor)
+     */
     public static void defaultConstructorReturnToClassBound(AnnotatedTypeFactory annotatedTypeFactory,
                                                             Element elt, AnnotatedTypeMirror type) {
         if (elt.getKind() == ElementKind.CONSTRUCTOR && type instanceof AnnotatedExecutableType) {
@@ -294,7 +332,12 @@ public class PICOTypeUtil {
         }
     }
 
-    /**Check if a field is final or not.*/
+    /**
+     * Check if a field is final or not.
+     *
+     * @param variableElement The field element
+     * @return true if the field is final, false otherwise
+     */
     public static boolean isFinalField(Element variableElement) {
         assert variableElement instanceof VariableElement;
         return ElementUtils.isFinal(variableElement);
